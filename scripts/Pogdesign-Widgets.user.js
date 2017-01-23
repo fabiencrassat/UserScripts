@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      0.2
+// @version      0.3
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -72,7 +72,9 @@ var main = function() {
         popup = "<div id='fcr-externalLinkPopup' style='position: absolute; width: 350px; z-index: 97; display: block;' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default'>";
         popup += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
         popup += "<div id='pop'>";
-        popup += "<div id='popheader'>" + show.getTitle() + "<br>" + show.getSeasonAndEpisode() + "</div>";
+        popup += "<div id='popheader'><a class='fcr-closePopup' href='javascript:fabiencrassat.pogdesignWidget.closeExternalLinkPopup();'>X</a>";
+        popup += "<span>" + show.getTitle() + "<br>" + show.getSeasonAndEpisode() + "</span>";
+        popup += "</div>";
         popup += "<div id='poptext'>" + externalLinks.getLinks(show) + "</div>";
         popup += "<div id='popfooter'>" + show.getSearch() + "</div>";
         popup += "</div></div></div>";
@@ -93,6 +95,7 @@ var main = function() {
 
     return {
         externalLinkPopup: externalLinkPopup,
+        closeExternalLinkPopup: ClearOtherPopup,
     };
 };
 
@@ -104,6 +107,8 @@ var stylesheets = "";
 stylesheets += "span.fcr-episodeContainer > :last-child {float: right; margin: 0 !important;}";
 stylesheets += "span.fcr-episodeContainer > :first-child {float: left;}";
 stylesheets += ".fcr-externalLink {height: 12px; width: 12px; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAA20lEQVQoU33RuQrCQBDG8YgHeIIHinhgZyNWgg8iCoqIpW/jg5nG0oew8b7j/wsZCSkM/Nbs7MzuuHE8z/snhlxIyhbaGEb0MMAb9myUvMAJR1xwxQEvJLCCPVsVKKGOMqqBAipIw8UTOskv0E55WHtGyRsocYYlXC3cUEQ0WTsrWS1bPKNBx9VCQSXv8MEEHZTgr2t4oGkBdKFLGAdz/cd58O4XnBFtKRN6V8tTm2tQS7pvSwjTh9tjZDENfehY7XSHbk2/immzNVT4K5A4smghGcwb0DexHHjOFwrY3c0uEFwZAAAAAElFTkSuQmCC')}";
+stylesheets += ".ep.infochecked .fcr-externalLink {filter: contrast(0)}";
+stylesheets += "a.fcr-closePopup {float: right; color: #66bbff !important}";
 var style = document.createElement("style");
 style.appendChild(document.createTextNode(stylesheets));
 (document.body || document.head || document.documentElement).appendChild(style);
