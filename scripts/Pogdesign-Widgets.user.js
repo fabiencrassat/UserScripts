@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      0.1
+// @version      0.2
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -11,7 +11,6 @@
 
 /*global $ */
 "use strict";
-var fabiencrassat = fabiencrassat || {};
 
 var main = function() {
 
@@ -112,7 +111,7 @@ style.appendChild(document.createTextNode(stylesheets));
 window.addEventListener('load', function() {
     // Add link to the search episode
     $("#month_box p > :last-child").wrap("<span class='fcr-episodeContainer'></span>");
-    $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:fabiencrassat.pogdesignWidget.externalLinkPopup($(this))' class='fcr-externalLink'></a>");
+    $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:void(0)' class='fcr-externalLink'></a>");
     $(".fcr-externalLink").on("click", function(event) {
         event.preventDefault();
         fabiencrassat.pogdesignWidget.externalLinkPopup($(this));
