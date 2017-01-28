@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      0.3
+// @version      0.4
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -60,7 +60,7 @@ var main = function() {
             for (var i = 0; i < externalLinks.links.length; i++) {
                 links += "<a target='_blank' href='" + externalLinks.links[i].url(show) + "'>";
                 links += externalLinks.links[i].site;
-                links += "</a>";
+                links += "</a><br>";
             }
             links += "</span>";
             return links;
@@ -79,7 +79,7 @@ var main = function() {
         popup += "<div id='popfooter'>" + show.getSearch() + "</div>";
         popup += "</div></div></div>";
 
-        element.parent().after(popup);
+        element.parent().parent().parent().after(popup);
     }
 
     function ClearOtherPopup() {
