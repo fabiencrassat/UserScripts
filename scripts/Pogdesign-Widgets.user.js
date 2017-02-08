@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      0.6
-// @description  Adds episode related links
+// @version      0.7
+// @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\d{1,}-\d{4}/
@@ -17,26 +17,26 @@ var main = function() {
 
     var show = {
         title: "",
-        getTitle: function() { return this.title; },
-        setTitle: function(title) { this.title = title; },
+        getTitle() { return this.title; },
+        setTitle(title) { this.title = title; },
         seasonAndEpisode: "",
-        getSeasonAndEpisode: function() { return this.seasonAndEpisode; },
-        setSeasonAndEpisode: function(seasonAndEpisode) { this.seasonAndEpisode = seasonAndEpisode; },
+        getSeasonAndEpisode() { return this.seasonAndEpisode; },
+        setSeasonAndEpisode(seasonAndEpisode) { this.seasonAndEpisode = seasonAndEpisode; },
 
-        extractShow: function(element) {
+        extractShow(element) {
             this.extractTitle(element);
             this.extractSeasonAndEpisode(element);
         },
-        extractTitle: function(element) {
+        extractTitle(element) {
             var title = $.trim(element.parent().prev().text());
             this.setTitle(title);
         },
-        extractSeasonAndEpisode: function(element) {
+        extractSeasonAndEpisode(element) {
             var seasonAndEpisode = element.prev().text();
             this.setSeasonAndEpisode(seasonAndEpisode);
         },
 
-        getSearch: function() {
+        getSearch() {
             return this.getTitle().replace(/ /gm, ".") + "." + this.getSeasonAndEpisode();
         }
     };
@@ -45,18 +45,18 @@ var main = function() {
         links: [
             {site: "google",
                 icon: "",
-                url: function(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; },
+                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; },
             },
             {site: "binsearch",
                 icon: "",
-                url: function(show) { return "https://binsearch.info/?q=" + show.getSearch(); },
+                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); },
             },
             {site: "subscene",
                 icon: "",
-                url: function(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); },
+                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); },
             },
         ],
-        getLinks: function(show) {
+        getLinks(show) {
             var links = "<span>";
             for (var i = 0; i < externalLinks.links.length; i++) {
                 links += "<a target='_blank' href='" + externalLinks.links[i].url(show) + "'>";
@@ -68,7 +68,7 @@ var main = function() {
         },
     };
 
-    function DisplayExternalLinkPopup(show, element) {
+    function displayExternalLinkPopup(show, element) {
         var popup = "";
         popup = "<div id='fcr-externalLinkPopup' style='position: absolute; width: 350px; z-index: 97; display: block;' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default'>";
         popup += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
@@ -83,25 +83,25 @@ var main = function() {
         element.parent().parent().parent().after(popup);
     }
 
-    function ClearOtherPopup() {
+    function clearOtherPopup() {
         var popup = $("#fcr-externalLinkPopup");
-        if(popup) popup.remove();
+        if(popup) { popup.remove(); }
     }
 
     function externalLinkPopup(element) {
-        ClearOtherPopup();
+        clearOtherPopup();
         show.extractShow(element);
-        DisplayExternalLinkPopup(show, element);
+        displayExternalLinkPopup(show, element);
     }
 
     return {
-        externalLinkPopup: externalLinkPopup,
-        closeExternalLinkPopup: ClearOtherPopup,
+        externalLinkPopup,
+        closeExternalLinkPopup: clearOtherPopup,
     };
 };
 
-var script = document.createElement('script');
-script.appendChild(document.createTextNode('var fabiencrassat = fabiencrassat || {}; fabiencrassat.pogdesignWidget = ('+ main +')();'));
+var script = document.createElement("script");
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.pogdesignWidget = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
 
 var stylesheets = "";
@@ -114,7 +114,7 @@ var style = document.createElement("style");
 style.appendChild(document.createTextNode(stylesheets));
 (document.body || document.head || document.documentElement).appendChild(style);
 
-window.addEventListener('load', function() {
+window.addEventListener("load", function() {
     // Add link to the search episode
     $("#month_box p > :last-child").wrap("<span class='fcr-episodeContainer'></span>");
     $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:void(0)' class='fcr-externalLink'></a>");
