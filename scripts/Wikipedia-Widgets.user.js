@@ -2,7 +2,7 @@
 // @name         Wikipedia-Widgets
 // @description  Add widgets like the section toggle and the edit of the section 0 in the articles
 // @namespace    https://github.com/fabiencrassat
-// @version      0.1
+// @version      0.2
 // @description  Add some widgets!
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://*.wikipedia.org/wiki/*
@@ -14,21 +14,17 @@
 function main () {
     "use strict";
 
-    return {
-        toggleSection: toggleSection
-    };
-
     function toggleSection(obj) {
         var parentObj = $(obj).parent().parent();
         var localName = parentObj[0].localName;
-        var n = parseInt(localName.replace('h', ''));
+        var n = parseInt(localName.replace("h", ""));
         var parentLocalName = [];
         for (var i = 1; i <= n; i++) {
-            parentLocalName[i - 1] = 'h' + i;
+            parentLocalName[i - 1] = "h" + i;
         }
-        var r = parentLocalName.join(', ');
+        var r = parentLocalName.join(", ");
 
-        if ($(obj).text() == "Hide") {
+        if ($(obj).text() === "Hide") {
             $(parentObj).nextUntil(r).hide();
             $(obj).text("Show");
         } else {
@@ -37,16 +33,20 @@ function main () {
             $(obj).text("Hide");
         }
     }
+
+    return {
+        toggleSection
+    };
 }
 
-var script = document.createElement('script');
-script.appendChild(document.createTextNode('var fabiencrassat = fabiencrassat || {}; fabiencrassat.WikipediaWidget = ('+ main +')();'));
+var script = document.createElement("script");
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.WikipediaWidget = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
 
-window.addEventListener('load', function() {
+window.addEventListener("load", function() {
     // Add the edit section zero
-    var articleTitle = encodeURIComponent( mw.config.get( 'wgPageName' ) )
-        .replace(/%20/g, '_').replace(/%3A/g, ':').replace(/%2F/g, '/').replace(/'/g, "%27");
+    var articleTitle = encodeURIComponent( mw.config.get( "wgPageName" ) )
+        .replace(/%20/g, "_").replace(/%3A/g, ":").replace(/%2F/g, "/").replace(/'/g, "%27");
     $("#firstHeading")
         .append("<span class='mw-editsection' style='margin-top:1.3em;'>")
         .append("<span class='mw-editsection-bracket'>[</span>")
