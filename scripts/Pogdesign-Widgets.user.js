@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.2
+// @version      1.0.3
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -38,11 +38,11 @@ var main = function() {
         getSeasonAndEpisode() { return this.seasonAndEpisode; },
         setSeasonAndEpisode() {
             if (arguments.length === 1) {
-                this.seasonAndEpisode = arguments[1];
+                this.seasonAndEpisode = arguments[0];
             }
             else if (arguments.length === 2) {
-                this.setSeason(arguments[1]);
-                this.setEpisode(arguments[2]);
+                this.setSeason(arguments[0]);
+                this.setEpisode(arguments[1]);
                 this.seasonAndEpisode = "S" + this.getSeason() + "E" + this.getEpisode();
             }
             else {
@@ -314,7 +314,7 @@ window.addEventListener("load", function() {
     else if ($("li.ep.info").length > 0) {
         fabiencrassat.pogdesignWidget.summary.stylesheets();
 
-        $("li.ep.info > strong > a").wrap("<span class='fcr-episodeContainer'></span>");
+        $("li.ep > strong > a, li.ep > strong > a").wrap("<span class='fcr-episodeContainer'></span>");
         $("<a href='javascript:void(0)' class='fcr-externalLink-summary-page'></a>").appendTo("span.fcr-episodeContainer");
         $(".fcr-externalLink-summary-page").on("click", function(event) {
             event.preventDefault();
