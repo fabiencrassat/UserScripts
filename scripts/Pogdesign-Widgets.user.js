@@ -20,25 +20,34 @@ var main = function() {
 
     var show = {
         title: "",
+        season: "",
+        episode: "",
         seasonAndEpisode: "",
         getTitle() { return this.title; },
         setTitle(title) { this.title = title; },
+        getSeason() { return this.season; },
+        setSeason(season) {
+            if (season.length < 2) { season = "0" + season; }
+            this.season = season;
+        },
+        getEpisode() { return this.episode; },
+        setEpisode(episode) {
+            if (episode.length < 2) { episode = "0" + episode; }
+            this.episode = episode;
+        },
         getSeasonAndEpisode() { return this.seasonAndEpisode; },
         setSeasonAndEpisode() {
             if (arguments.length === 1) {
                 this.seasonAndEpisode = arguments[1];
-                return;
             }
-            if (arguments.length === 2) {
-                var season = arguments[1];
-                var episode = arguments[2];
-                if (season.length < 2) { season = "0" + season; }
-                if (episode.length < 2) { episode = "0" + episode; }
-                this.seasonAndEpisode = "S" + season + "E" + episode;
-                return;
+            else if (arguments.length === 2) {
+                this.setSeason(arguments[1]);
+                this.setEpisode(arguments[2]);
+                this.seasonAndEpisode = "S" + this.getSeason() + "E" + this.getEpisode();
             }
-            alert("Exception in setSeasonAndEpisode");
-            return;
+            else {
+                alert("Exception in setSeasonAndEpisode");
+            }
         },
 
         getSearch() {
