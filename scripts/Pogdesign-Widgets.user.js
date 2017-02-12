@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.1
+// @version      1.0.2
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -12,7 +12,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/*global $, alert, console */
+/*global $, alert */
 /*global fabiencrassat */
 "use strict";
 
