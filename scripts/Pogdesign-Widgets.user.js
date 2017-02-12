@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0
+// @version      1.0.1
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -12,7 +12,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/*global $, console */
+/*global $, alert, console */
 /*global fabiencrassat */
 "use strict";
 
@@ -24,11 +24,21 @@ var main = function() {
         getTitle() { return this.title; },
         setTitle(title) { this.title = title; },
         getSeasonAndEpisode() { return this.seasonAndEpisode; },
-        setSeasonAndEpisode_1(seasonAndEpisode) { this.seasonAndEpisode = seasonAndEpisode; },
-        setSeasonAndEpisode_2(season, episode) {
-            if (season.length < 2) { season = "0" + season; }
-            if (episode.length < 2) { episode = "0" + episode; }
-            this.seasonAndEpisode = "S" + season + "E" + episode;
+        setSeasonAndEpisode() {
+            if (arguments.length === 1) {
+                this.seasonAndEpisode = arguments[1];
+                return;
+            }
+            if (arguments.length === 2) {
+                var season = arguments[1];
+                var episode = arguments[2];
+                if (season.length < 2) { season = "0" + season; }
+                if (episode.length < 2) { episode = "0" + episode; }
+                this.seasonAndEpisode = "S" + season + "E" + episode;
+                return;
+            }
+            alert("Exception in setSeasonAndEpisode");
+            return;
         },
 
         getSearch() {
@@ -128,7 +138,7 @@ var main = function() {
             },
             extractSeasonAndEpisode(show, element) {
                 var seasonAndEpisode = element.prev().text();
-                show.setSeasonAndEpisode_1(seasonAndEpisode);
+                show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-calendar-page", "block");
@@ -190,7 +200,7 @@ var main = function() {
             extractSeasonAndEpisode(show, element) {
                 var season = element.parent().parent().parent().find("[itemprop=seasonNumber]").text();
                 var episode = element.parent().parent().parent().find("[itemprop=episodeNumber]").text();
-                show.setSeasonAndEpisode_2(season, episode);
+                show.setSeasonAndEpisode(season, episode);
             },
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block");
@@ -216,7 +226,7 @@ var main = function() {
             },
             extractSeasonAndEpisode(show) {
                 var seasonAndEpisode = $("h3.sdfsdf").children().first().text();
-                show.setSeasonAndEpisode_1(seasonAndEpisode);
+                show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "inline-flex");
@@ -272,8 +282,6 @@ script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat ||
 window.addEventListener("load", function() {
     // Add search episode links for calendar pages
     if ($("#month_box p > :last-child").length > 0) {
-        console.log("Calendar page");
-
         fabiencrassat.pogdesignWidget.calendar.stylesheets();
 
         $("#month_box p > :last-child").wrap("<span class='fcr-episodeContainer'></span>");
@@ -285,8 +293,6 @@ window.addEventListener("load", function() {
     }
     // Add search episode links for episode page
     else if ($("h3.sdfsdf").length === 1) {
-        console.log("Episode page");
-
         fabiencrassat.pogdesignWidget.episode.stylesheets();
 
         $("<span> <a href='javascript:void(0)' class='fcr-externalLink-episode-page'>&lt;Links&gt;</a></span>").appendTo("h3.sdfsdf");
@@ -297,8 +303,6 @@ window.addEventListener("load", function() {
     }
     // Add search episode links for summary page
     else if ($("li.ep.info").length > 0) {
-        console.log("Summary page");
-
         fabiencrassat.pogdesignWidget.summary.stylesheets();
 
         $("li.ep.info > strong > a").wrap("<span class='fcr-episodeContainer'></span>");
@@ -309,7 +313,4 @@ window.addEventListener("load", function() {
         });
     }
     // no page found
-    else {
-        console.log("No page found");
-    }
 }, false);
