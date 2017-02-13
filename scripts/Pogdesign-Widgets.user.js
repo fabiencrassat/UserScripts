@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.3
+// @version      1.0.4
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -12,11 +12,18 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/*global $, alert */
+/*global $ */
 /*global fabiencrassat */
 "use strict";
 
 var main = function() {
+
+    var tools = {
+        addZeroToOneNumber(number) {
+            if (number.length < 2) { number = "0" + number; }
+            return number;
+        }
+    };
 
     var show = {
         title: "",
@@ -27,13 +34,11 @@ var main = function() {
         setTitle(title) { this.title = title; },
         getSeason() { return this.season; },
         setSeason(season) {
-            if (season.length < 2) { season = "0" + season; }
-            this.season = season;
+            this.season = tools.addZeroToOneNumber(season);
         },
         getEpisode() { return this.episode; },
         setEpisode(episode) {
-            if (episode.length < 2) { episode = "0" + episode; }
-            this.episode = episode;
+            this.episode = tools.addZeroToOneNumber(episode);
         },
         getSeasonAndEpisode() { return this.seasonAndEpisode; },
         setSeasonAndEpisode() {
@@ -46,29 +51,29 @@ var main = function() {
                 this.seasonAndEpisode = "S" + this.getSeason() + "E" + this.getEpisode();
             }
             else {
-                alert("Exception in setSeasonAndEpisode");
+                throw new RangeError("Exception in setSeasonAndEpisode");
             }
         },
 
         getSearch() {
             return this.getTitle().replace(/ /gm, ".") + "." + this.getSeasonAndEpisode();
-        }
+        },
     };
 
     var externalLinks = {
         links: [
             {site: "google",
                 icon: "",
-                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; },
             },
             {site: "binsearch",
                 icon: "",
-                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); }
+                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); },
             },
             {site: "subscene",
                 icon: "",
-                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
-            }
+                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); },
+            },
         ],
         getLinks(show) {
             var links = "<span>";
@@ -92,7 +97,7 @@ var main = function() {
             popup += "<div id='popfooter'>" + show.getSearch() + "</div>";
             popup += "</div></div></div>";
             return(popup);
-        }
+        },
     };
 
     var page = {
@@ -111,7 +116,7 @@ var main = function() {
                 var style = document.createElement("style");
                 style.appendChild(document.createTextNode(stylesheets));
                 (document.body || document.head || document.documentElement).appendChild(style);
-            }
+            },
         },
         calendar: {
             stylesheets() {
@@ -152,7 +157,7 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
-            }
+            },
         },
         summary: {
             stylesheets() {
@@ -214,7 +219,7 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block");
                 element.parent().parent().parent().after(popup);
-            }
+            },
         },
         episode: {
             stylesheets() {
@@ -240,8 +245,8 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
-            }
-        }
+            },
+        },
     };
 
     function clearLinksElement() {
@@ -270,17 +275,17 @@ var main = function() {
     return {
         calendar: {
             externalLinksPopup: externalLinksPopupOnCalendarPage,
-            stylesheets: page.calendar.insertStylesheets
+            stylesheets: page.calendar.insertStylesheets,
         },
         episode: {
             externalLinksPopup: externalLinksPopupOnEpisodePage,
-            stylesheets: page.episode.insertStylesheets
+            stylesheets: page.episode.insertStylesheets,
         },
         summary: {
             externalLinksPopup: externalLinksPopupOnSummaryPage,
-            stylesheets: page.summary.insertStylesheets
+            stylesheets: page.summary.insertStylesheets,
         },
-        clearLinksElement
+        clearLinksElement,
     };
 };
 
