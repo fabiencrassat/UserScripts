@@ -52,23 +52,23 @@ var main = function() {
 
         getSearch() {
             return this.getTitle().replace(/ /gm, ".") + "." + this.getSeasonAndEpisode();
-        },
+        }
     };
 
     var externalLinks = {
         links: [
             {site: "google",
                 icon: "",
-                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; },
+                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
             },
             {site: "binsearch",
                 icon: "",
-                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); },
+                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); }
             },
             {site: "subscene",
                 icon: "",
-                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); },
-            },
+                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
+            }
         ],
         getLinks(show) {
             var links = "<span>";
@@ -92,7 +92,7 @@ var main = function() {
             popup += "<div id='popfooter'>" + show.getSearch() + "</div>";
             popup += "</div></div></div>";
             return(popup);
-        },
+        }
     };
 
     var page = {
@@ -111,7 +111,7 @@ var main = function() {
                 var style = document.createElement("style");
                 style.appendChild(document.createTextNode(stylesheets));
                 (document.body || document.head || document.documentElement).appendChild(style);
-            },
+            }
         },
         calendar: {
             stylesheets() {
@@ -152,7 +152,7 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
-            },
+            }
         },
         summary: {
             stylesheets() {
@@ -214,7 +214,7 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block");
                 element.parent().parent().parent().after(popup);
-            },
+            }
         },
         episode: {
             stylesheets() {
@@ -240,8 +240,8 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
-            },
-        },
+            }
+        }
     };
 
     function clearLinksElement() {
@@ -270,17 +270,17 @@ var main = function() {
     return {
         calendar: {
             externalLinksPopup: externalLinksPopupOnCalendarPage,
-            stylesheets: page.calendar.insertStylesheets,
+            stylesheets: page.calendar.insertStylesheets
         },
         episode: {
             externalLinksPopup: externalLinksPopupOnEpisodePage,
-            stylesheets: page.episode.insertStylesheets,
+            stylesheets: page.episode.insertStylesheets
         },
         summary: {
             externalLinksPopup: externalLinksPopupOnSummaryPage,
-            stylesheets: page.summary.insertStylesheets,
+            stylesheets: page.summary.insertStylesheets
         },
-        clearLinksElement,
+        clearLinksElement
     };
 };
 
