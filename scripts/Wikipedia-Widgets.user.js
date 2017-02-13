@@ -2,7 +2,7 @@
 // @name         Wikipedia-Widgets
 // @description  Add widgets like the section toggle and the edit of the section 0 in the articles
 // @namespace    https://github.com/fabiencrassat
-// @version      0.2
+// @version      0.2.1
 // @description  Add some widgets!
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://*.wikipedia.org/wiki/*
