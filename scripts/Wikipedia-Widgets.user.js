@@ -17,7 +17,7 @@ function main () {
     function toggleSection(obj) {
         var parentObj = $(obj).parent().parent();
         var localName = parentObj[0].localName;
-        var n = parseInt(localName.replace("h", ""));
+        var n = parseInt(localName.replace("h", ""), 10);
         var parentLocalName = [];
         for (var i = 1; i <= n; i++) {
             parentLocalName[i - 1] = "h" + i;
