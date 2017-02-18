@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.6
+// @version      1.0.7
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -22,9 +22,16 @@ var tools = function() {
         if (number.length < 2) { number = "0" + number; }
         return number;
     }
+    function getPixelStyle(key, value) {
+        if (key && value) {
+            return " " + key + ": " + value + "px;";
+        }
+        return "";
+    }
 
     return {
-        addZeroToOneNumber
+        addZeroToOneNumber,
+        getPixelStyle
     };
 };
 
@@ -35,25 +42,25 @@ var model = function() {
         season: "",
         episode: "",
         seasonAndEpisode: "",
-        getTitle() { return this.title; },
-        setTitle(title) { this.title = title; },
-        getSeason() { return this.season; },
+        getTitle() { return show.title; },
+        setTitle(title) { show.title = title; },
+        getSeason() { return show.season; },
         setSeason(season) {
-            this.season = fabiencrassat.tools.addZeroToOneNumber(season);
+            show.season = fabiencrassat.tools.addZeroToOneNumber(season);
         },
-        getEpisode() { return this.episode; },
+        getEpisode() { return show.episode; },
         setEpisode(episode) {
-            this.episode = fabiencrassat.tools.addZeroToOneNumber(episode);
+            show.episode = fabiencrassat.tools.addZeroToOneNumber(episode);
         },
-        getSeasonAndEpisode() { return this.seasonAndEpisode; },
+        getSeasonAndEpisode() { return show.seasonAndEpisode; },
         setSeasonAndEpisode() {
             if (arguments.length === 1) {
-                this.seasonAndEpisode = arguments[0];
+                show.seasonAndEpisode = arguments[0];
             }
             else if (arguments.length === 2) {
-                this.setSeason(arguments[0]);
-                this.setEpisode(arguments[1]);
-                this.seasonAndEpisode = "S" + this.getSeason() + "E" + this.getEpisode();
+                show.setSeason(arguments[0]);
+                show.setEpisode(arguments[1]);
+                show.seasonAndEpisode = "S" + show.getSeason() + "E" + show.getEpisode();
             }
             else {
                 throw new RangeError("Exception in setSeasonAndEpisode");
@@ -61,18 +68,23 @@ var model = function() {
         },
 
         getSearch() {
-            return this.getTitle().replace(/ /gm, ".") + "." + this.getSeasonAndEpisode();
+            return show.getTitle().replace(/ /gm, ".") + "." + show.getSeasonAndEpisode();
         }
     };
 
     return {
-        show
+        show: {
+            getSearch: show.getSearch,
+            getTitle: show.getTitle,
+            setTitle: show.setTitle,
+            getSeasonAndEpisode: show.getSeasonAndEpisode,
+            setSeasonAndEpisode: show.setSeasonAndEpisode
+        }
     };
 };
 
-var main = function() {
-
-    var externalLinks = {
+var view = function() {
+    var popup = {
         links: [
             {site: "google",
                 icon: "",
@@ -99,33 +111,49 @@ var main = function() {
         },
 
         popupId: "fcr-external-links-element",
-        getPopupContainer() {
-            return $("#" + this.popupId);
+        getContainer() {
+            return $("#" + popup.popupId);
         },
-        removePopup(container) {
-            container.remove();
-        },
-        getPixelStyle(key, value) {
-            if (key && value) {
-                return " " + key + ": " + value + "px;";
+        close() {
+            var container = popup.getContainer();
+            if(container) {
+                container.remove();
             }
-            return "";
         },
-        createPopup(element, cssClass, cssDisplay, top, left) {
-            var popup = "";
-            popup = "<div id='" + this.popupId + "' style='position: absolute; width: 350px; z-index: 97; display: " + cssDisplay + ";" + this.getPixelStyle("top", top) + this.getPixelStyle("left", left) + "' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default " + cssClass + "'>";
-            popup += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
-            popup += "<div id='pop'>";
-            popup += "<div id='popheader'><a class='fcr-closePopup' href='javascript:fabiencrassat.pogdesignWidget.clearLinksElement();'>X</a>";
-            popup += "<span>" + fabiencrassat.model.show.getTitle() + " " + fabiencrassat.model.show.getSeasonAndEpisode() + "</span>";
-            popup += "</div>";
-            popup += "<div id='poptext'>" + this.getLinks() + "</div>";
-            popup += "<div id='popfooter'>" + fabiencrassat.model.show.getSearch() + "</div>";
-            popup += "</div></div></div>";
-            return(popup);
+        removeOnOutsideClickEvent() {
+            $(document).mouseup(function (event) {
+                var container = popup.getContainer();
+                if (!container.is(event.target) &&          // if the target of the click isn't the container
+                container.has(event.target).length === 0) { // nor a descendant of the container
+                    container.remove();
+                }
+            });
+        },
+        create(element, cssClass, cssDisplay, top, left) {
+            var result = "";
+            result = "<div id='" + popup.popupId + "' style='position: absolute; width: 350px; z-index: 97; display: " + cssDisplay + ";" + fabiencrassat.tools.getPixelStyle("top", top) + fabiencrassat.tools.getPixelStyle("left", left) + "' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default " + cssClass + "'>";
+            result += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
+            result += "<div id='pop'>";
+            result += "<div id='popheader'><a class='fcr-closePopup' href='javascript:fabiencrassat.view.externalLinks.close();'>X</a>";
+            result += "<span>" + fabiencrassat.model.show.getTitle() + " " + fabiencrassat.model.show.getSeasonAndEpisode() + "</span>";
+            result += "</div>";
+            result += "<div id='poptext'>" + popup.getLinks() + "</div>";
+            result += "<div id='popfooter'>" + fabiencrassat.model.show.getSearch() + "</div>";
+            result += "</div></div></div>";
+            return(result);
         }
     };
 
+    return {
+        externalLinks : {
+            removeOnOutsideClickEvent: popup.removeOnOutsideClickEvent,
+            close: popup.close,
+            create: popup.create
+        }
+    };
+};
+
+var main = function() {
     var page = {
         controller: {
             insertStylesheets(stylesheets) {
@@ -138,21 +166,6 @@ var main = function() {
                     event.preventDefault();
                     getExternalLinksPopup($(this));
                 });
-            },
-            removePopup() {
-                $(document).mouseup(function (event) {
-                    var container = externalLinks.getPopupContainer();
-                    if (!container.is(event.target) &&          // if the target of the click isn't the container
-                    container.has(event.target).length === 0) { // nor a descendant of the container
-                        externalLinks.removePopup(container);
-                    }
-                });
-            },
-            clearLinksElement() {
-                var container = externalLinks.getPopupContainer();
-                if(container) {
-                    externalLinks.removePopup(container);
-                }
             }
         },
         shared: {
@@ -208,11 +221,11 @@ var main = function() {
                 fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(element) {
-                var popup = externalLinks.createPopup(element, "fcr-calendar-page", "block");
+                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
             },
             getExternalLinksPopup(element) {
-                page.controller.clearLinksElement();
+                fabiencrassat.view.externalLinks.close();
                 page.calendar.extractShow(element);
                 page.calendar.displayExternalLinksPopup(element);
             },
@@ -225,7 +238,7 @@ var main = function() {
                 $("span.fcr-episodeContainer > :last-child").after(page.shared.externalImageLink());
 
                 page.controller.loadClickEventOnLinkElement(page.calendar.getExternalLinksPopup);
-                page.controller.removePopup();
+                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         },
         summary: {
@@ -288,11 +301,11 @@ var main = function() {
             displayExternalLinksPopup(element) {
                 var top = element.offset().top + 20;
                 var left = element.offset().left - 200;
-                var popup = externalLinks.createPopup(element, "fcr-external-links-popup", "block", top, left);
+                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-external-links-popup", "block", top, left);
                 $("body > div:last").after(popup);
             },
             getExternalLinksPopup(element) {
-                page.controller.clearLinksElement();
+                fabiencrassat.view.externalLinks.close();
                 page.summary.extractShow(element);
                 page.summary.displayExternalLinksPopup(element);
             },
@@ -305,7 +318,7 @@ var main = function() {
                 $(page.shared.externalImageLink()).appendTo("span.fcr-episodeContainer");
 
                 page.controller.loadClickEventOnLinkElement(page.summary.getExternalLinksPopup);
-                page.controller.removePopup();
+                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         },
         episode: {
@@ -327,11 +340,11 @@ var main = function() {
                 fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(element) {
-                var popup = externalLinks.createPopup(element, "fcr-external-links-popup", "inline-flex");
+                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
             },
             getExternalLinksPopup(element) {
-                page.controller.clearLinksElement();
+                fabiencrassat.view.externalLinks.close();
                 page.episode.extractShow();
                 page.episode.displayExternalLinksPopup(element);
             },
@@ -343,7 +356,7 @@ var main = function() {
                 $("<span> " + page.shared.externalTextLink() + "</span>").appendTo(element);
 
                 page.controller.loadClickEventOnLinkElement(page.episode.getExternalLinksPopup);
-                page.controller.removePopup();
+                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         }
     };
@@ -357,14 +370,14 @@ var main = function() {
         },
         episode: {
             addExternalLink: page.episode.addExternalLink
-        },
-        clearLinksElement: page.controller.clearLinksElement
+        }
     };
 };
 
 var script = document.createElement("script");
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.tools = ("+ tools +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.model = ("+ model +")();"));
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.view = ("+ view +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.pogdesignWidget = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
 
