@@ -85,9 +85,23 @@ var main = function() {
             links += "</span>";
             return links;
         },
-        createPopup(show, element, cssClass, cssDisplay) {
+
+        popupId: "fcr-external-links-element",
+        getPopupContainer() {
+            return $("#" + this.popupId);
+        },
+        removePopup(container) {
+            container.remove();
+        },
+        getPixelStyle(key, value) {
+            if (key && value) {
+                return " " + key + ": " + value + "px;";
+            }
+            return "";
+        },
+        createPopup(show, element, cssClass, cssDisplay, top, left) {
             var popup = "";
-            popup = "<div id='fcr-external-links-element' style='position: absolute; width: 350px; z-index: 97; display: " + cssDisplay + ";' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default " + cssClass + "'>";
+            popup = "<div id='" + this.popupId + "' style='position: absolute; width: 350px; z-index: 97; display: " + cssDisplay + ";" + this.getPixelStyle("top", top) + this.getPixelStyle("left", left) + "' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default " + cssClass + "'>";
             popup += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
             popup += "<div id='pop'>";
             popup += "<div id='popheader'><a class='fcr-closePopup' href='javascript:fabiencrassat.pogdesignWidget.clearLinksElement();'>X</a>";
@@ -101,22 +115,25 @@ var main = function() {
     };
 
     var page = {
-        shared: {
-            linkImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAA20lEQVQoU33RuQrCQBDG8YgHeIIHinhgZyNWgg8iCoqIpW/jg5nG0oew8b7j/wsZCSkM/Nbs7MzuuHE8z/snhlxIyhbaGEb0MMAb9myUvMAJR1xwxQEvJLCCPVsVKKGOMqqBAipIw8UTOskv0E55WHtGyRsocYYlXC3cUEQ0WTsrWS1bPKNBx9VCQSXv8MEEHZTgr2t4oGkBdKFLGAdz/cd58O4XnBFtKRN6V8tTm2tQS7pvSwjTh9tjZDENfehY7XSHbk2/immzNVT4K5A4smghGcwb0DexHHjOFwrY3c0uEFwZAAAAAElFTkSuQmCC",
-
-            stylesheets() {
-                var result = "";
-                result += "a.fcr-closePopup {" +
-                    "float: right;" +
-                    "color: #66bbff !important;" +
-                "}";
-                return(result);
-            },
+        controller: {
             insertStylesheets(stylesheets) {
                 var style = document.createElement("style");
-                style.appendChild(document.createTextNode(stylesheets));
+                style.appendChild(document.createTextNode(stylesheets()));
                 (document.body || document.head || document.documentElement).appendChild(style);
+            },
+            loadClickEventOnLinkElement(getExternalLinksPopup) {
+                $(".fcr-externalLinksLink").on("click", function(event) {
+                    event.preventDefault();
+                    getExternalLinksPopup($(this));
+                });
             }
+        },
+        shared: {
+            linkImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAA20lEQVQoU33RuQrCQBDG8YgHeIIHinhgZyNWgg8iCoqIpW/jg5nG0oew8b7j/wsZCSkM/Nbs7MzuuHE8z/snhlxIyhbaGEb0MMAb9myUvMAJR1xwxQEvJLCCPVsVKKGOMqqBAipIw8UTOskv0E55WHtGyRsocYYlXC3cUEQ0WTsrWS1bPKNBx9VCQSXv8MEEHZTgr2t4oGkBdKFLGAdz/cd58O4XnBFtKRN6V8tTm2tQS7pvSwjTh9tjZDENfehY7XSHbk2/immzNVT4K5A4smghGcwb0DexHHjOFwrY3c0uEFwZAAAAAElFTkSuQmCC",
+            stylesheets: "a.fcr-closePopup {" +
+                    "float: right;" +
+                    "color: #66bbff !important;" +
+                "}"
         },
         calendar: {
             stylesheets() {
@@ -128,19 +145,16 @@ var main = function() {
                 result += "span.fcr-episodeContainer > :first-child {" +
                     "float: left;" +
                 "}";
-                result += ".fcr-externalLink-calendar-page {" +
+                result += ".fcr-externalLink-image {" +
                     "height: 12px;" +
                     "width: 12px;" +
                     "background-image: url('" + page.shared.linkImage + "');" +
                 "}";
-                result += ".ep.infochecked .fcr-externalLink-calendar-page {" +
+                result += ".ep.infochecked .fcr-externalLink-image {" +
                     "filter: contrast(0);" +
                 "}";
-                result += page.shared.stylesheets();
+                result += page.shared.stylesheets;
                 return(result);
-            },
-            insertStylesheets() {
-                page.shared.insertStylesheets(page.calendar.stylesheets());
             },
             extractShow(show, element) {
                 this.extractTitle(show, element);
@@ -157,6 +171,11 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
+            },
+            getExternalLinksPopup(element) {
+                clearLinksElement();
+                page.calendar.extractShow(show, element);
+                page.calendar.displayExternalLinksPopup(show, element);
             }
         },
         summary: {
@@ -165,12 +184,15 @@ var main = function() {
                 result += "span.fcr-episodeContainer {" +
                     "display: flex;" +
                 "}";
-                result += ".fcr-externalLink-summary-page {" +
+                result += ".fcr-externalLink-image {" +
                     "height: 12px !important;" +
                     "width: 12px !important;" +
                     "filter: contrast(0);" +
                     "margin: 9px -12px 9px 54px;" +
                     "background-image: url('" + page.shared.linkImage + "');" +
+                "}";
+                result += ".ep.infochecked .fcr-externalLink-image {" +
+                    "filter: contrast(0.4);" +
                 "}";
                 result += ".fcr-external-links-popup #pop {" +
                     "padding: 1px;" +
@@ -197,11 +219,8 @@ var main = function() {
                     "color: #FF9326;" +
                     "border-radius: 0 0 9px 9px;" +
                 "}";
-                result += page.shared.stylesheets();
+                result += page.shared.stylesheets;
                 return(result);
-            },
-            insertStylesheets() {
-                page.shared.insertStylesheets(page.summary.stylesheets());
             },
             extractShow(show, element) {
                 this.extractTitle(show);
@@ -217,8 +236,15 @@ var main = function() {
                 show.setSeasonAndEpisode(season, episode);
             },
             displayExternalLinksPopup(show, element) {
-                var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block");
-                element.parent().parent().parent().after(popup);
+                var top = element.offset().top + 20;
+                var left = element.offset().left - 200;
+                var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block", top, left);
+                $("body > div:last").after(popup);
+            },
+            getExternalLinksPopup(element) {
+                clearLinksElement();
+                page.summary.extractShow(show, element);
+                page.summary.displayExternalLinksPopup(show, element);
             }
         },
         episode: {
@@ -226,9 +252,6 @@ var main = function() {
                 var result = "";
                 result += page.summary.stylesheets();
                 return(result);
-            },
-            insertStylesheets() {
-                page.shared.insertStylesheets(page.episode.stylesheets());
             },
             extractShow(show) {
                 this.extractTitle(show);
@@ -245,45 +268,72 @@ var main = function() {
             displayExternalLinksPopup(show, element) {
                 var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
+            },
+            getExternalLinksPopup(element) {
+                clearLinksElement();
+                page.episode.extractShow(show);
+                page.episode.displayExternalLinksPopup(show, element);
             }
         }
     };
 
     function clearLinksElement() {
-        var element = $("#fcr-external-links-element");
-        if(element) { element.remove(); }
+        var container = externalLinks.getPopupContainer();
+        if(container) {
+            externalLinks.removePopup(container);
+        }
+    }
+    function removePopup() {
+        $(document).mouseup(function (event) {
+            var container = externalLinks.getPopupContainer();
+            if (!container.is(event.target) &&          // if the target of the click isn't the container
+            container.has(event.target).length === 0) { // nor a descendant of the container
+                externalLinks.removePopup(container);
+            }
+        });
     }
 
-    function externalLinksPopupOnCalendarPage(element) {
-        clearLinksElement();
-        page.calendar.extractShow(show, element);
-        page.calendar.displayExternalLinksPopup(show, element);
+    function addExternalLinkOnCalendarPage(element) {
+        var container = $(element);
+        if (container.length === 0) { return; }
+        page.controller.insertStylesheets(page.calendar.stylesheets);
+
+        container.wrap("<span class='fcr-episodeContainer'></span>");
+        $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:void(0)' class='fcr-externalLinksLink fcr-externalLink-image'></a>");
+        page.controller.loadClickEventOnLinkElement(page.calendar.getExternalLinksPopup);
+        removePopup();
     }
 
-    function externalLinksPopupOnEpisodePage(element) {
-        clearLinksElement();
-        page.episode.extractShow(show);
-        page.episode.displayExternalLinksPopup(show, element);
+    function addExternalLinkOnSummaryPage(element) {
+        var container = $(element);
+        if (container.length === 0) { return; }
+        page.controller.insertStylesheets(page.summary.stylesheets);
+
+        container.wrap("<span class='fcr-episodeContainer'></span>");
+        $("<a href='javascript:void(0)' class='fcr-externalLinksLink fcr-externalLink-image'></a>").appendTo("span.fcr-episodeContainer");
+        page.controller.loadClickEventOnLinkElement(page.summary.getExternalLinksPopup);
+        removePopup();
     }
 
-    function externalLinksPopupOnSummaryPage(element) {
-        clearLinksElement();
-        page.summary.extractShow(show, element);
-        page.summary.displayExternalLinksPopup(show, element);
+    function addExternalLinkOnEpisodePage(element) {
+        var container = $(element);
+        if (container.length != 1) { return; }
+        page.controller.insertStylesheets(page.episode.stylesheets);
+
+        $("<span> <a href='javascript:void(0)' class='fcr-externalLinksLink'>&lt;Links&gt;</a></span>").appendTo(element);
+        page.controller.loadClickEventOnLinkElement(page.episode.getExternalLinksPopup);
+        removePopup();
     }
 
     return {
         calendar: {
-            externalLinksPopup: externalLinksPopupOnCalendarPage,
-            stylesheets: page.calendar.insertStylesheets
-        },
-        episode: {
-            externalLinksPopup: externalLinksPopupOnEpisodePage,
-            stylesheets: page.episode.insertStylesheets
+            addExternalLink: addExternalLinkOnCalendarPage
         },
         summary: {
-            externalLinksPopup: externalLinksPopupOnSummaryPage,
-            stylesheets: page.summary.insertStylesheets
+            addExternalLink: addExternalLinkOnSummaryPage
+        },
+        episode: {
+            addExternalLink: addExternalLinkOnEpisodePage
         },
         clearLinksElement
     };
@@ -295,36 +345,10 @@ script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat ||
 
 window.addEventListener("load", function() {
     // Add search episode links for calendar pages
-    if ($("#month_box p > :last-child").length > 0) {
-        fabiencrassat.pogdesignWidget.calendar.stylesheets();
-
-        $("#month_box p > :last-child").wrap("<span class='fcr-episodeContainer'></span>");
-        $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:void(0)' class='fcr-externalLink-calendar-page'></a>");
-        $(".fcr-externalLink-calendar-page").on("click", function(event) {
-            event.preventDefault();
-            fabiencrassat.pogdesignWidget.calendar.externalLinksPopup($(this));
-        });
-    }
-    // Add search episode links for episode page
-    else if ($("h3.sdfsdf").length === 1) {
-        fabiencrassat.pogdesignWidget.episode.stylesheets();
-
-        $("<span> <a href='javascript:void(0)' class='fcr-externalLink-episode-page'>&lt;Links&gt;</a></span>").appendTo("h3.sdfsdf");
-        $(".fcr-externalLink-episode-page").on("click", function(event) {
-            event.preventDefault();
-            fabiencrassat.pogdesignWidget.episode.externalLinksPopup($(this));
-        });
-    }
+    fabiencrassat.pogdesignWidget.calendar.addExternalLink("#month_box p > :last-child");
     // Add search episode links for summary page
-    else if ($("li.ep.info").length > 0) {
-        fabiencrassat.pogdesignWidget.summary.stylesheets();
-
-        $("li.ep > strong > a, li.ep > strong > a").wrap("<span class='fcr-episodeContainer'></span>");
-        $("<a href='javascript:void(0)' class='fcr-externalLink-summary-page'></a>").appendTo("span.fcr-episodeContainer");
-        $(".fcr-externalLink-summary-page").on("click", function(event) {
-            event.preventDefault();
-            fabiencrassat.pogdesignWidget.summary.externalLinksPopup($(this));
-        });
-    }
+    fabiencrassat.pogdesignWidget.summary.addExternalLink("li.ep > strong > a");
+    // Add search episode links for episode page
+    fabiencrassat.pogdesignWidget.episode.addExternalLink("h3.sdfsdf");
     // no page found
 }, false);
