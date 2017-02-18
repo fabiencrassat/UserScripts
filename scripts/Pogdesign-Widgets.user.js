@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.4
+// @version      1.0.6
 // @description  Add links relative to the episode
 // @author       You
 // @match        https://www.pogdesign.co.uk/cat/
@@ -16,14 +16,19 @@
 /*global fabiencrassat */
 "use strict";
 
-var main = function() {
+var tools = function() {
 
-    var tools = {
-        addZeroToOneNumber(number) {
-            if (number.length < 2) { number = "0" + number; }
-            return number;
-        }
+    function addZeroToOneNumber(number) {
+        if (number.length < 2) { number = "0" + number; }
+        return number;
+    }
+
+    return {
+        addZeroToOneNumber
     };
+};
+
+var model = function() {
 
     var show = {
         title: "",
@@ -34,11 +39,11 @@ var main = function() {
         setTitle(title) { this.title = title; },
         getSeason() { return this.season; },
         setSeason(season) {
-            this.season = tools.addZeroToOneNumber(season);
+            this.season = fabiencrassat.tools.addZeroToOneNumber(season);
         },
         getEpisode() { return this.episode; },
         setEpisode(episode) {
-            this.episode = tools.addZeroToOneNumber(episode);
+            this.episode = fabiencrassat.tools.addZeroToOneNumber(episode);
         },
         getSeasonAndEpisode() { return this.seasonAndEpisode; },
         setSeasonAndEpisode() {
@@ -60,25 +65,32 @@ var main = function() {
         }
     };
 
+    return {
+        show
+    };
+};
+
+var main = function() {
+
     var externalLinks = {
         links: [
             {site: "google",
                 icon: "",
-                url(show) { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+                url() { return "https://www.google.fr/search?q=" + fabiencrassat.model.show.getSearch() + "+vostfr+streaming"; }
             },
             {site: "binsearch",
                 icon: "",
-                url(show) { return "https://binsearch.info/?q=" + show.getSearch(); }
+                url() { return "https://binsearch.info/?q=" + fabiencrassat.model.show.getSearch(); }
             },
             {site: "subscene",
                 icon: "",
-                url(show) { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
+                url() { return "https://subscene.com/subtitles/release?q=" + fabiencrassat.model.show.getSearch(); }
             }
         ],
-        getLinks(show) {
+        getLinks() {
             var links = "<span>";
             for (var i = 0; i < this.links.length; i++) {
-                links += "<a target='_blank' href='" + this.links[i].url(show) + "'>";
+                links += "<a target='_blank' href='" + this.links[i].url() + "'>";
                 links += this.links[i].site;
                 links += "</a><br>";
             }
@@ -99,16 +111,16 @@ var main = function() {
             }
             return "";
         },
-        createPopup(show, element, cssClass, cssDisplay, top, left) {
+        createPopup(element, cssClass, cssDisplay, top, left) {
             var popup = "";
             popup = "<div id='" + this.popupId + "' style='position: absolute; width: 350px; z-index: 97; display: " + cssDisplay + ";" + this.getPixelStyle("top", top) + this.getPixelStyle("left", left) + "' class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default " + cssClass + "'>";
             popup += "<div class='cluetip-inner ui-widget-content ui-cluetip-content'>";
             popup += "<div id='pop'>";
             popup += "<div id='popheader'><a class='fcr-closePopup' href='javascript:fabiencrassat.pogdesignWidget.clearLinksElement();'>X</a>";
-            popup += "<span>" + show.getTitle() + " " + show.getSeasonAndEpisode() + "</span>";
+            popup += "<span>" + fabiencrassat.model.show.getTitle() + " " + fabiencrassat.model.show.getSeasonAndEpisode() + "</span>";
             popup += "</div>";
-            popup += "<div id='poptext'>" + this.getLinks(show) + "</div>";
-            popup += "<div id='popfooter'>" + show.getSearch() + "</div>";
+            popup += "<div id='poptext'>" + this.getLinks() + "</div>";
+            popup += "<div id='popfooter'>" + fabiencrassat.model.show.getSearch() + "</div>";
             popup += "</div></div></div>";
             return(popup);
         }
@@ -122,10 +134,25 @@ var main = function() {
                 (document.body || document.head || document.documentElement).appendChild(style);
             },
             loadClickEventOnLinkElement(getExternalLinksPopup) {
-                $(".fcr-externalLinksLink").on("click", function(event) {
+                $("." + page.shared.externalLinksLinkClass).on("click", function(event) {
                     event.preventDefault();
                     getExternalLinksPopup($(this));
                 });
+            },
+            removePopup() {
+                $(document).mouseup(function (event) {
+                    var container = externalLinks.getPopupContainer();
+                    if (!container.is(event.target) &&          // if the target of the click isn't the container
+                    container.has(event.target).length === 0) { // nor a descendant of the container
+                        externalLinks.removePopup(container);
+                    }
+                });
+            },
+            clearLinksElement() {
+                var container = externalLinks.getPopupContainer();
+                if(container) {
+                    externalLinks.removePopup(container);
+                }
             }
         },
         shared: {
@@ -133,7 +160,19 @@ var main = function() {
             stylesheets: "a.fcr-closePopup {" +
                     "float: right;" +
                     "color: #66bbff !important;" +
-                "}"
+                "}",
+            externalLinksLinkClass: "fcr-externalLinksLink",
+            externalLink(classText, linkText) {
+                return "<a href='javascript:void(0)' class='" + page.shared.externalLinksLinkClass + " " + classText + "'>" +
+                        linkText +
+                    "</a>";
+            },
+            externalImageLink() {
+                return page.shared.externalLink("fcr-externalLink-image", "");
+            },
+            externalTextLink() {
+                return page.shared.externalLink("", "&lt;Links&gt;");
+            }
         },
         calendar: {
             stylesheets() {
@@ -156,26 +195,37 @@ var main = function() {
                 result += page.shared.stylesheets;
                 return(result);
             },
-            extractShow(show, element) {
-                this.extractTitle(show, element);
-                this.extractSeasonAndEpisode(show, element);
+            extractShow(element) {
+                this.extractTitle(element);
+                this.extractSeasonAndEpisode(element);
             },
-            extractTitle(show, element) {
+            extractTitle(element) {
                 var title = $.trim(element.parent().prev().text());
-                show.setTitle(title);
+                fabiencrassat.model.show.setTitle(title);
             },
-            extractSeasonAndEpisode(show, element) {
+            extractSeasonAndEpisode(element) {
                 var seasonAndEpisode = element.prev().text();
-                show.setSeasonAndEpisode(seasonAndEpisode);
+                fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
             },
-            displayExternalLinksPopup(show, element) {
-                var popup = externalLinks.createPopup(show, element, "fcr-calendar-page", "block");
+            displayExternalLinksPopup(element) {
+                var popup = externalLinks.createPopup(element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
             },
             getExternalLinksPopup(element) {
-                clearLinksElement();
-                page.calendar.extractShow(show, element);
-                page.calendar.displayExternalLinksPopup(show, element);
+                page.controller.clearLinksElement();
+                page.calendar.extractShow(element);
+                page.calendar.displayExternalLinksPopup(element);
+            },
+            addExternalLink(element) {
+                var container = $(element);
+                if (container.length === 0) { return; }
+                page.controller.insertStylesheets(page.calendar.stylesheets);
+
+                container.wrap("<span class='fcr-episodeContainer'></span>");
+                $("span.fcr-episodeContainer > :last-child").after(page.shared.externalImageLink());
+
+                page.controller.loadClickEventOnLinkElement(page.calendar.getExternalLinksPopup);
+                page.controller.removePopup();
             }
         },
         summary: {
@@ -222,29 +272,40 @@ var main = function() {
                 result += page.shared.stylesheets;
                 return(result);
             },
-            extractShow(show, element) {
-                this.extractTitle(show);
-                this.extractSeasonAndEpisode(show, element);
+            extractShow(element) {
+                this.extractTitle();
+                this.extractSeasonAndEpisode(element);
             },
-            extractTitle(show) {
+            extractTitle() {
                 var title = $.trim($("h2.sumhead > a").text());
-                show.setTitle(title);
+                fabiencrassat.model.show.setTitle(title);
             },
-            extractSeasonAndEpisode(show, element) {
+            extractSeasonAndEpisode(element) {
                 var season = element.parent().parent().parent().find("[itemprop=seasonNumber]").text();
                 var episode = element.parent().parent().parent().find("[itemprop=episodeNumber]").text();
-                show.setSeasonAndEpisode(season, episode);
+                fabiencrassat.model.show.setSeasonAndEpisode(season, episode);
             },
-            displayExternalLinksPopup(show, element) {
+            displayExternalLinksPopup(element) {
                 var top = element.offset().top + 20;
                 var left = element.offset().left - 200;
-                var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "block", top, left);
+                var popup = externalLinks.createPopup(element, "fcr-external-links-popup", "block", top, left);
                 $("body > div:last").after(popup);
             },
             getExternalLinksPopup(element) {
-                clearLinksElement();
-                page.summary.extractShow(show, element);
-                page.summary.displayExternalLinksPopup(show, element);
+                page.controller.clearLinksElement();
+                page.summary.extractShow(element);
+                page.summary.displayExternalLinksPopup(element);
+            },
+            addExternalLink(element) {
+                var container = $(element);
+                if (container.length === 0) { return; }
+                page.controller.insertStylesheets(page.summary.stylesheets);
+
+                container.wrap("<span class='fcr-episodeContainer'></span>");
+                $(page.shared.externalImageLink()).appendTo("span.fcr-episodeContainer");
+
+                page.controller.loadClickEventOnLinkElement(page.summary.getExternalLinksPopup);
+                page.controller.removePopup();
             }
         },
         episode: {
@@ -253,93 +314,57 @@ var main = function() {
                 result += page.summary.stylesheets();
                 return(result);
             },
-            extractShow(show) {
-                this.extractTitle(show);
-                this.extractSeasonAndEpisode(show);
+            extractShow() {
+                this.extractTitle();
+                this.extractSeasonAndEpisode();
             },
-            extractTitle(show) {
+            extractTitle() {
                 var title = $("h3.sumunderhead").text();
-                show.setTitle(title);
+                fabiencrassat.model.show.setTitle(title);
             },
-            extractSeasonAndEpisode(show) {
+            extractSeasonAndEpisode() {
                 var seasonAndEpisode = $("h3.sdfsdf").children().first().text();
-                show.setSeasonAndEpisode(seasonAndEpisode);
+                fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
             },
-            displayExternalLinksPopup(show, element) {
-                var popup = externalLinks.createPopup(show, element, "fcr-external-links-popup", "inline-flex");
+            displayExternalLinksPopup(element) {
+                var popup = externalLinks.createPopup(element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
             },
             getExternalLinksPopup(element) {
-                clearLinksElement();
-                page.episode.extractShow(show);
-                page.episode.displayExternalLinksPopup(show, element);
+                page.controller.clearLinksElement();
+                page.episode.extractShow();
+                page.episode.displayExternalLinksPopup(element);
+            },
+            addExternalLink(element) {
+                var container = $(element);
+                if (container.length !== 1) { return; }
+                page.controller.insertStylesheets(page.episode.stylesheets);
+
+                $("<span> " + page.shared.externalTextLink() + "</span>").appendTo(element);
+
+                page.controller.loadClickEventOnLinkElement(page.episode.getExternalLinksPopup);
+                page.controller.removePopup();
             }
         }
     };
 
-    function clearLinksElement() {
-        var container = externalLinks.getPopupContainer();
-        if(container) {
-            externalLinks.removePopup(container);
-        }
-    }
-    function removePopup() {
-        $(document).mouseup(function (event) {
-            var container = externalLinks.getPopupContainer();
-            if (!container.is(event.target) &&          // if the target of the click isn't the container
-            container.has(event.target).length === 0) { // nor a descendant of the container
-                externalLinks.removePopup(container);
-            }
-        });
-    }
-
-    function addExternalLinkOnCalendarPage(element) {
-        var container = $(element);
-        if (container.length === 0) { return; }
-        page.controller.insertStylesheets(page.calendar.stylesheets);
-
-        container.wrap("<span class='fcr-episodeContainer'></span>");
-        $("span.fcr-episodeContainer > :last-child").after("<a href='javascript:void(0)' class='fcr-externalLinksLink fcr-externalLink-image'></a>");
-        page.controller.loadClickEventOnLinkElement(page.calendar.getExternalLinksPopup);
-        removePopup();
-    }
-
-    function addExternalLinkOnSummaryPage(element) {
-        var container = $(element);
-        if (container.length === 0) { return; }
-        page.controller.insertStylesheets(page.summary.stylesheets);
-
-        container.wrap("<span class='fcr-episodeContainer'></span>");
-        $("<a href='javascript:void(0)' class='fcr-externalLinksLink fcr-externalLink-image'></a>").appendTo("span.fcr-episodeContainer");
-        page.controller.loadClickEventOnLinkElement(page.summary.getExternalLinksPopup);
-        removePopup();
-    }
-
-    function addExternalLinkOnEpisodePage(element) {
-        var container = $(element);
-        if (container.length != 1) { return; }
-        page.controller.insertStylesheets(page.episode.stylesheets);
-
-        $("<span> <a href='javascript:void(0)' class='fcr-externalLinksLink'>&lt;Links&gt;</a></span>").appendTo(element);
-        page.controller.loadClickEventOnLinkElement(page.episode.getExternalLinksPopup);
-        removePopup();
-    }
-
     return {
         calendar: {
-            addExternalLink: addExternalLinkOnCalendarPage
+            addExternalLink: page.calendar.addExternalLink
         },
         summary: {
-            addExternalLink: addExternalLinkOnSummaryPage
+            addExternalLink: page.summary.addExternalLink
         },
         episode: {
-            addExternalLink: addExternalLinkOnEpisodePage
+            addExternalLink: page.episode.addExternalLink
         },
-        clearLinksElement
+        clearLinksElement: page.controller.clearLinksElement
     };
 };
 
 var script = document.createElement("script");
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.tools = ("+ tools +")();"));
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.model = ("+ model +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.pogdesignWidget = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
 
