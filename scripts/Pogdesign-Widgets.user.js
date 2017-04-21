@@ -17,13 +17,13 @@
 /*global fabiencrassat */
 "use strict";
 
-function CheckProtocol() {
+function checkProtocol() {
     if (location.protocol === "http:") {
         window.location.replace("https:" + window.location.href.substring(5));
     }
     return;
 }
-CheckProtocol();
+checkProtocol();
 
 var tools = function() {
 
