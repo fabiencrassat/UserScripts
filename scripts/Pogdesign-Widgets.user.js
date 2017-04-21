@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.10
+// @version      1.0.9
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -17,10 +17,13 @@
 /*global fabiencrassat */
 "use strict";
 
-if (location.protocol === "http:") {
-    window.location.replace("https:" + window.location.href.substring(5));
+function CheckProtocol() {
+    if (location.protocol === "http:") {
+        window.location.replace("https:" + window.location.href.substring(5));
+    }
     return;
 }
+CheckProtocol();
 
 var tools = function() {
 
