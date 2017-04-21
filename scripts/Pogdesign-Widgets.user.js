@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.8
+// @version      1.0.9
 // @description  Add links relative to the episode
-// @author       You
+// @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
+// @match        http://www.pogdesign.co.uk/cat/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\d{1,}-\d{4}/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*\/Season-\d+\/Episode-\d+/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*-summary/
@@ -15,6 +16,11 @@
 /*global $ */
 /*global fabiencrassat */
 "use strict";
+
+if (location.protocol == "http:") {
+    window.location.replace("https:" + window.location.href.substring(5));
+    return;
+}
 
 var tools = function() {
 
@@ -130,13 +136,13 @@ var view = function() {
         create(element, cssClass, cssDisplay, top, left) {
             var result = `
             <div id='` + popup.popupId + `'
-            style='position: absolute; width: 350px; z-index: 97; display: ` + cssDisplay + `;` + fabiencrassat.tools.getPixelStyle("top", top) + fabiencrassat.tools.getPixelStyle("left", left) + `'
+            style='position: absolute; width: 350px; z-index: 97; display: ` + cssDisplay + ";" + fabiencrassat.tools.getPixelStyle("top", top) + fabiencrassat.tools.getPixelStyle("left", left) + `'
             class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default ` + cssClass + `'>
               <div class='cluetip-inner ui-widget-content ui-cluetip-content'>
                 <div id='pop'>
                   <div id='popheader'>
                     <a class='fcr-closePopup' href='javascript:fabiencrassat.view.externalLinks.close();'>X</a>
-                    <span>` + fabiencrassat.model.show.getTitle() + ` ` + fabiencrassat.model.show.getSeasonAndEpisode() + `</span>
+                    <span>` + fabiencrassat.model.show.getTitle() + " " + fabiencrassat.model.show.getSeasonAndEpisode() + `</span>
                   </div>
                   <div id='poptext'>` + popup.getLinks() + `</div>
                   <div id='popfooter'>` + fabiencrassat.model.show.getSearch() + `</div>
