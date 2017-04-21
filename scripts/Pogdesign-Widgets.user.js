@@ -21,7 +21,6 @@ function checkProtocol() {
     if (location.protocol === "http:") {
         window.location.replace("https:" + window.location.href.substring(5));
     }
-    return;
 }
 checkProtocol();
 
