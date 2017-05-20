@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.11
+// @version      1.0.12
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -342,7 +342,7 @@ var main = function() {
                 this.extractSeasonAndEpisode();
             },
             extractTitle() {
-                var title = $("h3.sumunderhead").text();
+                var title = $(".furtherinfo a:first").text();
                 fabiencrassat.model.show.setTitle(title);
             },
             extractSeasonAndEpisode() {
