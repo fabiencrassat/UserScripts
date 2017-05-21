@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.13
+// @version      1.0.14
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -176,14 +176,22 @@ var main = function() {
         controller: {
             insertStylesheets(stylesheets) {
                 var style = document.createElement("style");
-                style.appendChild(document.createTextNode(stylesheets()));
+                style.appendChild(document.createTextNode(stylesheets));
                 (document.body || document.head || document.documentElement).appendChild(style);
             },
-            loadClickEventOnLinkElement(getExternalLinksPopup) {
+            extractShow(pageElement, element) {
+                pageElement.extractTitle(element);
+                pageElement.extractSeasonAndEpisode(element);
+            },
+            getExternalLinksPopup(pageElement, element) {
+                page.controller.extractShow(pageElement, element);
+                pageElement.displayExternalLinksPopup(element);
+            },
+            loadClickEventOnLinkElement(pageElement) {
                 $("." + page.shared.externalLinksLinkClass).on("click", function(event) {
                     event.preventDefault();
                     externalLinks.close();
-                    getExternalLinksPopup($(this));
+                    page.controller.getExternalLinksPopup(pageElement, $(this));
                 });
                 externalLinks.removeOnOutsideClickEvent();
             },
@@ -197,17 +205,19 @@ var main = function() {
             },
             addExternalLink(pageElement, element) {
                 if (!page.controller.canAddExternalLink(pageElement.isInLocationPage, element)) { return; }
-                page.controller.insertStylesheets(pageElement.stylesheets);
+                page.controller.insertStylesheets(page.shared.stylesheets(pageElement));
                 pageElement.insertExternalLink(element);
-                page.controller.loadClickEventOnLinkElement(pageElement.getExternalLinksPopup);
+                page.controller.loadClickEventOnLinkElement(pageElement);
             }
         },
         shared: {
             linkImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAA20lEQVQoU33RuQrCQBDG8YgHeIIHinhgZyNWgg8iCoqIpW/jg5nG0oew8b7j/wsZCSkM/Nbs7MzuuHE8z/snhlxIyhbaGEb0MMAb9myUvMAJR1xwxQEvJLCCPVsVKKGOMqqBAipIw8UTOskv0E55WHtGyRsocYYlXC3cUEQ0WTsrWS1bPKNBx9VCQSXv8MEEHZTgr2t4oGkBdKFLGAdz/cd58O4XnBFtKRN6V8tTm2tQS7pvSwjTh9tjZDENfehY7XSHbk2/immzNVT4K5A4smghGcwb0DexHHjOFwrY3c0uEFwZAAAAAElFTkSuQmCC",
-            stylesheets: `a.fcr-closePopup {
+            stylesheets(pageElement) {
+                return `a.fcr-closePopup {
                     float: right;
                     color: #66bbff !important;
-                }`,
+                }` + pageElement.stylesheets();
+            },
             externalLinksLinkClass: "fcr-externalLinksLink",
             externalLink(classText, linkText) {
                 return "<a href='javascript:void(0)' class='" + page.shared.externalLinksLinkClass + " " + classText + "'>" +
@@ -223,7 +233,7 @@ var main = function() {
         },
         calendar: {
             stylesheets() {
-                var result = `
+                return `
                 span.fcr-episodeContainer > :last-child {
                     float: right;
                 }
@@ -238,12 +248,6 @@ var main = function() {
                     width: 12px;
                     background-image: url('` + page.shared.linkImage + `');
                 }`;
-                result += page.shared.stylesheets;
-                return(result);
-            },
-            extractShow(element) {
-                this.extractTitle(element);
-                this.extractSeasonAndEpisode(element);
             },
             extractTitle(element) {
                 var title = $.trim(element.parent().prev().text());
@@ -257,10 +261,6 @@ var main = function() {
                 var popup = externalLinks.create(element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
             },
-            getExternalLinksPopup(element) {
-                page.calendar.extractShow(element);
-                page.calendar.displayExternalLinksPopup(element);
-            },
             isInLocationPage() {
                 /* The regex is the same than the @include in the header */
                 return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/($|\d{1,}-\d{4})/g);
@@ -272,7 +272,7 @@ var main = function() {
         },
         summary: {
             stylesheets() {
-                var result = `
+                return `
                 span.fcr-episodeContainer {
                     display: flex;
                 }
@@ -311,12 +311,6 @@ var main = function() {
                     color: #FF9326;
                     border-radius: 0 0 9px 9px;
                 }`;
-                result += page.shared.stylesheets;
-                return(result);
-            },
-            extractShow(element) {
-                this.extractTitle();
-                this.extractSeasonAndEpisode(element);
             },
             extractTitle() {
                 var title = $.trim($("h2.sumhead > a").text());
@@ -333,10 +327,6 @@ var main = function() {
                 var popup = externalLinks.create(element, "fcr-external-links-popup", "block", top, left);
                 $("body > div:last").after(popup);
             },
-            getExternalLinksPopup(element) {
-                page.summary.extractShow(element);
-                page.summary.displayExternalLinksPopup(element);
-            },
             isInLocationPage() {
                 /* The regex is the same than the @include in the header */
                 return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*-summary/g);
@@ -348,13 +338,7 @@ var main = function() {
         },
         episode: {
             stylesheets() {
-                var result = "";
-                result += page.summary.stylesheets();
-                return(result);
-            },
-            extractShow() {
-                this.extractTitle();
-                this.extractSeasonAndEpisode();
+                return page.summary.stylesheets();
             },
             extractTitle() {
                 var title = $(".furtherinfo a:first").text();
@@ -368,10 +352,6 @@ var main = function() {
                 var popup = externalLinks.create(element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
             },
-            getExternalLinksPopup(element) {
-                page.episode.extractShow();
-                page.episode.displayExternalLinksPopup(element);
-            },
             isInLocationPage() {
                 /* The regex is the same than the @include in the header */
                 return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*\/Season-\d+\/Episode-\d+/g);
@@ -384,24 +364,9 @@ var main = function() {
 
     return {
         addExternalLink: page.controller.addExternalLink,
-        calendar: {
-            isInLocationPage: page.calendar.isInLocationPage,
-            stylesheets: page.calendar.stylesheets,
-            insertExternalLink: page.calendar.insertExternalLink,
-            getExternalLinksPopup: page.calendar.getExternalLinksPopup
-        },
-        summary: {
-            isInLocationPage: page.summary.isInLocationPage,
-            stylesheets: page.summary.stylesheets,
-            insertExternalLink: page.summary.insertExternalLink,
-            getExternalLinksPopup: page.summary.getExternalLinksPopup
-        },
-        episode: {
-            isInLocationPage: page.episode.isInLocationPage,
-            stylesheets: page.episode.stylesheets,
-            insertExternalLink: page.episode.insertExternalLink,
-            getExternalLinksPopup: page.episode.getExternalLinksPopup
-        }
+        calendar: page.calendar,
+        summary: page.summary,
+        episode: page.episode
     };
 };
 
