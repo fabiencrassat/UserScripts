@@ -13,7 +13,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/*global $, console */
+/*global $ */
 /*global fabiencrassat */
 "use strict";
 
@@ -196,11 +196,6 @@ var main = function() {
                 return true;
             },
             addExternalLink(pageElement, element) {
-                if(!pageElement.isInLocationPage) { console.error("isInLocationPage() is not defined"); }
-                if(!pageElement.stylesheets) { console.error("stylesheets() is not defined"); }
-                if(!pageElement.insertExternalLink) { console.error("insertExternalLink() is not defined"); }
-                if(!pageElement.getExternalLinksPopup) { console.error("getExternalLinksPopup() is not defined"); }
-
                 if (!page.controller.canAddExternalLink(pageElement.isInLocationPage, element)) { return; }
                 page.controller.insertStylesheets(pageElement.stylesheets);
                 pageElement.insertExternalLink(element);
