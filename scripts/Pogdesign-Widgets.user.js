@@ -1,7 +1,7 @@
   // ==UserScript==
   // @name         Pogdesign-Widgets
   // @namespace    https://github.com/fabiencrassat
-  // @version      1.1.0
+  // @version      1.1.2
   // @description  Add links relative to the episode
   // @author       Fabien Crassat <fabien@crassat.com>
   // @match        https://www.pogdesign.co.uk/cat/
@@ -65,8 +65,8 @@
           setSeasonAndEpisode() {
               if (arguments.length === 1) {
                   var regex = /^s(\d{1,})e(\d{1,})/gi;
-                  show.setSeason(arguments[0].replace(regex, '$1'));
-                  show.setEpisode(arguments[0].replace(regex, '$2'));
+                  show.setSeason(arguments[0].replace(regex, "$1"));
+                  show.setEpisode(arguments[0].replace(regex, "$2"));
                   return;
               }
               if (arguments.length === 2) {
@@ -306,8 +306,8 @@
                   var seasonAndEpisode = element.parent().next().text();
                   var regex = /^Season (\d{1,}), Episode (\d{1,})/g;
                   return {
-                      season: seasonAndEpisode.replace(regex, '$1'),
-                      episode: seasonAndEpisode.replace(regex, '$2')
+                      season: seasonAndEpisode.replace(regex, "$1"),
+                      episode: seasonAndEpisode.replace(regex, "$2")
                   };
               },
               displayExternalLinksPopup(element) {
