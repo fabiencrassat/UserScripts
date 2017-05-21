@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.12
+// @version      1.0.13
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -13,7 +13,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/*global $ */
+/*global $, console */
 /*global fabiencrassat */
 "use strict";
 
@@ -44,6 +44,7 @@ var tools = function() {
 };
 
 var model = function() {
+    var tools = fabiencrassat.tools;
 
     var show = {
         title: "",
@@ -54,25 +55,25 @@ var model = function() {
         setTitle(title) { show.title = title; },
         getSeason() { return show.season; },
         setSeason(season) {
-            show.season = fabiencrassat.tools.addZeroToOneNumber(season);
+            show.season = tools.addZeroToOneNumber(season);
         },
         getEpisode() { return show.episode; },
         setEpisode(episode) {
-            show.episode = fabiencrassat.tools.addZeroToOneNumber(episode);
+            show.episode = tools.addZeroToOneNumber(episode);
         },
         getSeasonAndEpisode() { return show.seasonAndEpisode; },
         setSeasonAndEpisode() {
             if (arguments.length === 1) {
                 show.seasonAndEpisode = arguments[0];
+                return;
             }
-            else if (arguments.length === 2) {
+            if (arguments.length === 2) {
                 show.setSeason(arguments[0]);
                 show.setEpisode(arguments[1]);
                 show.seasonAndEpisode = "S" + show.getSeason() + "E" + show.getEpisode();
+                return;
             }
-            else {
-                throw new RangeError("Exception in setSeasonAndEpisode");
-            }
+            throw new RangeError("Exception in setSeasonAndEpisode");
         },
 
         getSearch() {
@@ -92,19 +93,22 @@ var model = function() {
 };
 
 var view = function() {
+    var tools = fabiencrassat.tools;
+    var show = fabiencrassat.model.show;
+
     var popup = {
         links: [
             {site: "google",
                 icon: "",
-                url() { return "https://www.google.fr/search?q=" + fabiencrassat.model.show.getSearch() + "+vostfr+streaming"; }
+                url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
             },
             {site: "binsearch",
                 icon: "",
-                url() { return "https://binsearch.info/?q=" + fabiencrassat.model.show.getSearch(); }
+                url() { return "https://binsearch.info/?q=" + show.getSearch(); }
             },
             {site: "subscene",
                 icon: "",
-                url() { return "https://subscene.com/subtitles/release?q=" + fabiencrassat.model.show.getSearch(); }
+                url() { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
             }
         ],
         getLinks() {
@@ -138,16 +142,16 @@ var view = function() {
         create(element, cssClass, cssDisplay, top, left) {
             var result = `
             <div id='` + popup.popupId + `'
-            style='position: absolute; width: 350px; z-index: 97; display: ` + cssDisplay + ";" + fabiencrassat.tools.getPixelStyle("top", top) + fabiencrassat.tools.getPixelStyle("left", left) + `'
+            style='position: absolute; width: 350px; z-index: 97; display: ` + cssDisplay + ";" + tools.getPixelStyle("top", top) + tools.getPixelStyle("left", left) + `'
             class='cluetip ui-widget ui-widget-content ui-cluetip clue-right-default cluetip-default ` + cssClass + `'>
               <div class='cluetip-inner ui-widget-content ui-cluetip-content'>
                 <div id='pop'>
                   <div id='popheader'>
                     <a class='fcr-closePopup' href='javascript:fabiencrassat.view.externalLinks.close();'>X</a>
-                    <span>` + fabiencrassat.model.show.getTitle() + " " + fabiencrassat.model.show.getSeasonAndEpisode() + `</span>
+                    <span>` + show.getTitle() + " " + show.getSeasonAndEpisode() + `</span>
                   </div>
                   <div id='poptext'>` + popup.getLinks() + `</div>
-                  <div id='popfooter'>` + fabiencrassat.model.show.getSearch() + `</div>
+                  <div id='popfooter'>` + show.getSearch() + `</div>
                 </div>
               </div>
             </div>`;
@@ -165,6 +169,9 @@ var view = function() {
 };
 
 var main = function() {
+    var externalLinks = fabiencrassat.view.externalLinks;
+    var show = fabiencrassat.model.show;
+
     var page = {
         controller: {
             insertStylesheets(stylesheets) {
@@ -175,8 +182,29 @@ var main = function() {
             loadClickEventOnLinkElement(getExternalLinksPopup) {
                 $("." + page.shared.externalLinksLinkClass).on("click", function(event) {
                     event.preventDefault();
+                    externalLinks.close();
                     getExternalLinksPopup($(this));
                 });
+                externalLinks.removeOnOutsideClickEvent();
+            },
+            isInLocationPage(regex) {
+              return regex.test(window.location.href);
+            },
+            canAddExternalLink(isInLocationPage, element) {
+                if (!isInLocationPage) { return false; }
+                if ($(element).length === 0) { return false; }
+                return true;
+            },
+            addExternalLink(pageElement, element) {
+                if(!pageElement.isInLocationPage) { console.error("isInLocationPage() is not defined"); }
+                if(!pageElement.stylesheets) { console.error("stylesheets() is not defined"); }
+                if(!pageElement.insertExternalLink) { console.error("insertExternalLink() is not defined"); }
+                if(!pageElement.getExternalLinksPopup) { console.error("getExternalLinksPopup() is not defined"); }
+
+                if (!page.controller.canAddExternalLink(pageElement.isInLocationPage, element)) { return; }
+                page.controller.insertStylesheets(pageElement.stylesheets);
+                pageElement.insertExternalLink(element);
+                page.controller.loadClickEventOnLinkElement(pageElement.getExternalLinksPopup);
             }
         },
         shared: {
@@ -224,31 +252,27 @@ var main = function() {
             },
             extractTitle(element) {
                 var title = $.trim(element.parent().prev().text());
-                fabiencrassat.model.show.setTitle(title);
+                show.setTitle(title);
             },
             extractSeasonAndEpisode(element) {
                 var seasonAndEpisode = element.prev().text();
-                fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
+                show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(element) {
-                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-calendar-page", "block");
+                var popup = externalLinks.create(element, "fcr-calendar-page", "block");
                 element.parent().parent().parent().after(popup);
             },
             getExternalLinksPopup(element) {
-                fabiencrassat.view.externalLinks.close();
                 page.calendar.extractShow(element);
                 page.calendar.displayExternalLinksPopup(element);
             },
-            addExternalLink(element) {
-                var container = $(element);
-                if (container.length === 0) { return; }
-                page.controller.insertStylesheets(page.calendar.stylesheets);
-
-                container.wrap("<span class='fcr-episodeContainer'></span>");
+            isInLocationPage() {
+                /* The regex is the same than the @include in the header */
+                return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/($|\d{1,}-\d{4})/g);
+            },
+            insertExternalLink(element) {
+                $(element).wrap("<span class='fcr-episodeContainer'></span>");
                 $("span.fcr-episodeContainer > :last-child").after(page.shared.externalImageLink());
-
-                page.controller.loadClickEventOnLinkElement(page.calendar.getExternalLinksPopup);
-                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         },
         summary: {
@@ -301,34 +325,30 @@ var main = function() {
             },
             extractTitle() {
                 var title = $.trim($("h2.sumhead > a").text());
-                fabiencrassat.model.show.setTitle(title);
+                show.setTitle(title);
             },
             extractSeasonAndEpisode(element) {
                 var season = element.parent().parent().parent().find("[itemprop=seasonNumber]").text();
                 var episode = element.parent().parent().parent().find("[itemprop=episodeNumber]").text();
-                fabiencrassat.model.show.setSeasonAndEpisode(season, episode);
+                show.setSeasonAndEpisode(season, episode);
             },
             displayExternalLinksPopup(element) {
                 var top = element.offset().top + 20;
                 var left = element.offset().left - 200;
-                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-external-links-popup", "block", top, left);
+                var popup = externalLinks.create(element, "fcr-external-links-popup", "block", top, left);
                 $("body > div:last").after(popup);
             },
             getExternalLinksPopup(element) {
-                fabiencrassat.view.externalLinks.close();
                 page.summary.extractShow(element);
                 page.summary.displayExternalLinksPopup(element);
             },
-            addExternalLink(element) {
-                var container = $(element);
-                if (container.length === 0) { return; }
-                page.controller.insertStylesheets(page.summary.stylesheets);
-
-                container.wrap("<span class='fcr-episodeContainer'></span>");
+            isInLocationPage() {
+                /* The regex is the same than the @include in the header */
+                return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*-summary/g);
+            },
+            insertExternalLink(element) {
+                $(element).wrap("<span class='fcr-episodeContainer'></span>");
                 $(page.shared.externalImageLink()).appendTo("span.fcr-episodeContainer");
-
-                page.controller.loadClickEventOnLinkElement(page.summary.getExternalLinksPopup);
-                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         },
         episode: {
@@ -343,43 +363,49 @@ var main = function() {
             },
             extractTitle() {
                 var title = $(".furtherinfo a:first").text();
-                fabiencrassat.model.show.setTitle(title);
+                show.setTitle(title);
             },
             extractSeasonAndEpisode() {
                 var seasonAndEpisode = $("h3.sdfsdf").children().first().text();
-                fabiencrassat.model.show.setSeasonAndEpisode(seasonAndEpisode);
+                show.setSeasonAndEpisode(seasonAndEpisode);
             },
             displayExternalLinksPopup(element) {
-                var popup = fabiencrassat.view.externalLinks.create(element, "fcr-external-links-popup", "inline-flex");
+                var popup = externalLinks.create(element, "fcr-external-links-popup", "inline-flex");
                 element.after(popup);
             },
             getExternalLinksPopup(element) {
-                fabiencrassat.view.externalLinks.close();
                 page.episode.extractShow();
                 page.episode.displayExternalLinksPopup(element);
             },
-            addExternalLink(element) {
-                var container = $(element);
-                if (container.length !== 1) { return; }
-                page.controller.insertStylesheets(page.episode.stylesheets);
-
+            isInLocationPage() {
+                /* The regex is the same than the @include in the header */
+                return page.controller.isInLocationPage(/^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*\/Season-\d+\/Episode-\d+/g);
+            },
+            insertExternalLink(element) {
                 $("<span> " + page.shared.externalTextLink() + "</span>").appendTo(element);
-
-                page.controller.loadClickEventOnLinkElement(page.episode.getExternalLinksPopup);
-                fabiencrassat.view.externalLinks.removeOnOutsideClickEvent();
             }
         }
     };
 
     return {
+        addExternalLink: page.controller.addExternalLink,
         calendar: {
-            addExternalLink: page.calendar.addExternalLink
+            isInLocationPage: page.calendar.isInLocationPage,
+            stylesheets: page.calendar.stylesheets,
+            insertExternalLink: page.calendar.insertExternalLink,
+            getExternalLinksPopup: page.calendar.getExternalLinksPopup
         },
         summary: {
-            addExternalLink: page.summary.addExternalLink
+            isInLocationPage: page.summary.isInLocationPage,
+            stylesheets: page.summary.stylesheets,
+            insertExternalLink: page.summary.insertExternalLink,
+            getExternalLinksPopup: page.summary.getExternalLinksPopup
         },
         episode: {
-            addExternalLink: page.episode.addExternalLink
+            isInLocationPage: page.episode.isInLocationPage,
+            stylesheets: page.episode.stylesheets,
+            insertExternalLink: page.episode.insertExternalLink,
+            getExternalLinksPopup: page.episode.getExternalLinksPopup
         }
     };
 };
@@ -388,15 +414,15 @@ var script = document.createElement("script");
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.tools = ("+ tools +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.model = ("+ model +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.view = ("+ view +")();"));
-script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.pogdesignWidget = ("+ main +")();"));
+script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.main = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
 
 window.addEventListener("load", function() {
     // Add search episode links for calendar pages
-    fabiencrassat.pogdesignWidget.calendar.addExternalLink("#month_box p > :last-child");
+    fabiencrassat.main.addExternalLink(fabiencrassat.main.calendar, "#month_box p > :last-child");
     // Add search episode links for summary page
-    fabiencrassat.pogdesignWidget.summary.addExternalLink("li.ep > strong > a");
+    fabiencrassat.main.addExternalLink(fabiencrassat.main.summary, "li.ep > strong > a");
     // Add search episode links for episode page
-    fabiencrassat.pogdesignWidget.episode.addExternalLink("h3.sdfsdf");
+    fabiencrassat.main.addExternalLink(fabiencrassat.main.episode, "h3.sdfsdf");
     // no page found
 }, false);
