@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.2.0
+// @version      1.2.1
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -64,14 +64,20 @@ var page = function() {
         day: {
             stylesheets() {
                 return `
+                .overbox h4 a {
+                    width: 35%;
+                    padding-right: 0;
+                    margin-right: 25%;
+                }
                 span.fcr-episodeContainer {
                     padding-top: 24px !important;
                     padding-left: 30px !important;
                     float: left !important;
+                    width: 36px !important;
                 }
                 .fcr-externalLink-image {
                     height: 12px;
-                    width: 12px;
+                    width: 12px !important;
                     padding: 0 !important;
                     background-image: url('` + shared.linkImage + `');
                 }
