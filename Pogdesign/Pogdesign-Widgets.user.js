@@ -10,7 +10,7 @@
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/day\/\d{1,}-\d{1,}-\d{4}/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*\/Season-\d+\/Episode-\d+/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*-summary/
-// @require      https://github.com/fabiencrassat/UserScripts/raw/master/scripts/require/Pogdesign-Widgets.js
+// @require      https://github.com/fabiencrassat/UserScripts/raw/master/Pogdesign/require/Pogdesign-Widgets.js
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
