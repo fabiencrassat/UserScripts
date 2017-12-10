@@ -75,6 +75,7 @@ var model = function() {
             getSearch: show.getSearch,
             getTitle: show.getTitle,
             setTitle: show.setTitle,
+            getSeason: show.getSeason,
             getSeasonAndEpisode: show.getSeasonAndEpisode,
             setSeasonAndEpisode: show.setSeasonAndEpisode
         }
@@ -90,6 +91,10 @@ var view = function() {
             {site: "google",
                 icon: "",
                 url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+            },
+            {site: "yourserie",
+                icon: "",
+                url() { return "http://www.yourserie.com/?s=" + show.getTitle() + "+season+" + show.getSeason(); }
             },
             {site: "binsearch",
                 icon: "",
