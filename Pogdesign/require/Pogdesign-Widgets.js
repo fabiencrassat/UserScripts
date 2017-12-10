@@ -126,7 +126,9 @@ var view = function() {
             for (var i = 0; i < this.links.length; i++) {
                 links += this.links[i].name + ": ";
                 for (var j = 0; j < this.links[i].sites.length; j++) {
-                    if (j !== 0) links += " | ";
+                    if (j !== 0) {
+                        links += " | ";
+                    }
                     links += "<a target='_blank' href='" + this.links[i].sites[j].url() + "'>" + this.links[i].sites[j].name + "</a>";
                 }
                 links += "<br/>";
