@@ -88,27 +88,48 @@ var view = function() {
 
     var popup = {
         links: [
-            {site: "google",
-                icon: "",
-                url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+            {name: "Streaming",
+                sites : [
+                    {name: "google",
+                        icon: "",
+                        url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+                    }
+                ]
             },
-            {site: "yourserie",
-                icon: "",
-                url() { return "http://www.yourserie.com/?s=" + show.getTitle() + "+season+" + show.getSeason(); }
+            {name: "Download",
+                sites: [
+                    {name: "google",
+                        icon: "",
+                        url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+direct+download"; }
+                    },
+                    {name: "yourserie",
+                        icon: "",
+                        url() { return "http://www.yourserie.com/?s=" + show.getTitle() + "+season+" + show.getSeason(); }
+                    },
+                    {name: "binsearch",
+                        icon: "",
+                        url() { return "https://binsearch.info/?q=" + show.getSearch(); }
+                    }
+                ]
             },
-            {site: "binsearch",
-                icon: "",
-                url() { return "https://binsearch.info/?q=" + show.getSearch(); }
-            },
-            {site: "subscene",
-                icon: "",
-                url() { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
+            {name: "Subtitle",
+                sites : [
+                    {name: "subscene",
+                        icon: "",
+                        url() { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
+                    }
+                ]
             }
         ],
         getLinks() {
             var links = "<span>";
             for (var i = 0; i < this.links.length; i++) {
-                links += "<a target='_blank' href='" + this.links[i].url() + "'>" + this.links[i].site + "</a><br>";
+                links += this.links[i].name + ": ";
+                for (var j = 0; j < this.links[i].sites.length; j++) {
+                    if (j !== 0) links += " | ";
+                    links += "<a target='_blank' href='" + this.links[i].sites[j].url() + "'>" + this.links[i].sites[j].name + "</a>";
+                }
+                links += "<br/>";
             }
             links += "</span>";
             return links;
