@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.3.1
+// @version      1.3.2
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -10,7 +10,7 @@
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/day\/\d{1,}-\d{1,}-\d{4}/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*\/Season-\d+\/Episode-\d+/
 // @include      /^https:\/\/www\.pogdesign\.co\.uk\/cat\/\w+(-*\w+)*-summary/
-// @require      https://greasyfork.org/scripts/35624-pogdesign-widgets-js/code/Pogdesign-Widgetsjs.js?version=236151
+// @require      https://greasyfork.org/scripts/35624-pogdesign-widgets-js/code/Pogdesign-Widgetsjs.js?version=246687
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
