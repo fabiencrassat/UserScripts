@@ -1,6 +1,6 @@
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.0
+// @version      1.0.1
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -25,10 +25,14 @@ var tools = function() {
         }
         return "";
     }
+    function encodeURL(urlToEncode) {
+        return encodeURIComponent(urlToEncode).replace(/'/g, '%27');
+    }
 
     return {
         addZeroToOneNumber,
-        getPixelStyle
+        getPixelStyle,
+        encodeURL
     };
 };
 
@@ -92,7 +96,7 @@ var view = function() {
                 sites : [
                     {name: "google",
                         icon: "",
-                        url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+vostfr+streaming"; }
+                        url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+vostfr+streaming"; }
                     }
                 ]
             },
@@ -100,15 +104,15 @@ var view = function() {
                 sites: [
                     {name: "google",
                         icon: "",
-                        url() { return "https://www.google.fr/search?q=" + show.getSearch() + "+direct+download"; }
+                        url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+direct+download"; }
                     },
                     {name: "yourserie",
                         icon: "",
-                        url() { return "http://www.yourserie.com/?s=" + show.getTitle() + "+season+" + show.getSeason(); }
+                        url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()) + "+season+" + tools.encodeURL(show.getSeason()); }
                     },
                     {name: "binsearch",
                         icon: "",
-                        url() { return "https://binsearch.info/?q=" + show.getSearch(); }
+                        url() { return "https://binsearch.info/?q=" + tools.encodeURL(show.getSearch()); }
                     }
                 ]
             },
@@ -116,7 +120,7 @@ var view = function() {
                 sites : [
                     {name: "subscene",
                         icon: "",
-                        url() { return "https://subscene.com/subtitles/release?q=" + show.getSearch(); }
+                        url() { return "https://subscene.com/subtitles/release?q=" + tools.encodeURL(show.getSearch()); }
                     }
                 ]
             }
@@ -281,4 +285,3 @@ script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat ||
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.view = ("+ view +")();"));
 script.appendChild(document.createTextNode("var fabiencrassat = fabiencrassat || {}; fabiencrassat.main = ("+ main +")();"));
 (document.body || document.head || document.documentElement).appendChild(script);
-
