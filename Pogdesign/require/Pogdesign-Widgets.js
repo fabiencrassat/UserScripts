@@ -26,7 +26,7 @@ var tools = function() {
         return "";
     }
     function encodeURL(urlToEncode) {
-        return encodeURIComponent(urlToEncode).replace(/'/g, '%27');
+        return encodeURIComponent(urlToEncode).replace(/'/g, "%27");
     }
 
     return {
