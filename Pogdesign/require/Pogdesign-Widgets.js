@@ -1,6 +1,6 @@
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.1
+// @version      1.0.2
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -105,7 +105,7 @@ var view = function() {
                         url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+direct+download"; }
                     },
                     {name: "reddit",
-                        url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()); }
+                        url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()) + "&restrict_sr=on"; }
                     },
                     {name: "yourserie",
                         url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()) + "+season+" + tools.encodeURL(show.getSeason()); }
