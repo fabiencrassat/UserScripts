@@ -95,23 +95,22 @@ var view = function() {
             {name: "Streaming",
                 sites : [
                     {name: "google",
-                        icon: "",
                         url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+vostfr+streaming"; }
                     }
                 ]
             },
             {name: "Download",
                 sites: [
-                    {name: "google",
-                        icon: "",
+                    {name: "direct",
                         url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+direct+download"; }
                     },
+                    {name: "reddit",
+                        url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()); }
+                    },
                     {name: "yourserie",
-                        icon: "",
                         url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()) + "+season+" + tools.encodeURL(show.getSeason()); }
                     },
                     {name: "binsearch",
-                        icon: "",
                         url() { return "https://binsearch.info/?q=" + tools.encodeURL(show.getSearch()); }
                     }
                 ]
@@ -119,7 +118,6 @@ var view = function() {
             {name: "Subtitle",
                 sites : [
                     {name: "subscene",
-                        icon: "",
                         url() { return "https://subscene.com/subtitles/release?q=" + tools.encodeURL(show.getSearch()); }
                     }
                 ]
