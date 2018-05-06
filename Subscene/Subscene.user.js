@@ -9,7 +9,7 @@
 // @require      https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js
 // ==/UserScript==
 
-/** global: Cookies */
+/*global: Cookies*/
 
 ((function() {
   "use strict";
