@@ -9,43 +9,46 @@
 // @require      https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js
 // ==/UserScript==
 
-(function() {
-  'use strict';
+/** global: Cookies */
 
-  const SEPARATOR_VALUES = ',';
+((function() {
+  "use strict";
+
+  const SEPARATOR_VALUES = ",";
 
   const languages = {
+    domain : ".subscene.com",
+    path : "/",
+    key : "LanguageFilter",
     values : {
-      13: 'english'
+      13: "english"
     },
 
-    getKeys() {
+    getKeyValues() {
       return Object.keys(languages.values).join(SEPARATOR_VALUES);
     },
     arePresents() {
-      const languageFilterCookie = Cookies.get('LanguageFilter');
+      const languageFilterCookie = Cookies.get(languages.key);
 
-      if (languageFilterCookie === undefined) return false;
-      if (languageFilterCookie !== languages.getKeys()) return false;
+      if (!languageFilterCookie || languageFilterCookie !== languages.getKeyValues()) {
+        return false;
+      }
 
       return true;
     },
     setCookie() {
-      Cookies.set('LanguageFilter', languages.getKeys(), {
-        domain: '.subscene.com',
-        path: '/',
+      Cookies.set(languages.key, languages.getKeyValues(), {
+        domain: languages.domain,
+        path: languages.path,
         secure: true
       });
     }
   };
 
   /* Main */
-  console.log(Cookies.get());
   if (languages.arePresents()) {
-    console.log("No need to reload");
     return;
   }
-  console.log("Set languages and refresh");
   languages.setCookie();
   location.reload();
-})();
+})());
