@@ -102,7 +102,10 @@ var view = function() {
             {name: "Download",
                 sites: [
                     {name: "direct",
-                        url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+direct+download"; }
+                        url() { return "https://www.google.fr/search?q=" + tools.encodeURL(show.getSearch()) + "+direct+download+-torrent"; }
+                    },
+                    {name: "megaddl",
+                        url() { return "https://megaddl.co/?s=" + tools.encodeURL(show.getSearch()); }
                     },
                     {name: "reddit",
                         url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()) + "&restrict_sr=on"; }
