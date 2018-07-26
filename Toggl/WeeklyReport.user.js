@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.1
+// @version      0.3
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/thisWeek/
@@ -55,7 +55,9 @@
             const element = $(this).find(displayColumnsSelector);
             element.each(function(indexColumn) {
                 const dataInCeil = dataDaysPlusTotal[indexColumn][displayLines.length - indexLine - 1];
-                $(this).append("<p>" + dataInCeil.toFixed(decimalLenght) + "</p>");
+                if (dataInCeil !== 0) {
+                    $(this).append("<p>" + dataInCeil.toFixed(decimalLenght) + "</p>");
+                }
             });
         });
     };
