@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.3
+// @version      0.4
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/thisWeek/
@@ -11,7 +11,7 @@
 /** global: $, console */
 
 (function() {
-    'use strict';
+    "use strict";
 
     const weekDaysPlusTotal = [0, 1, 2, 3, 4, 5, 6, 7];
     const urlToFollow = "https://toggl.com/reports/api/v2/weekly.json";
@@ -20,13 +20,17 @@
     const decimalLenght = 3;
 
     const textToJsonObject = function(text) {
-        if (!text) return {};
+        if (!text) {
+            return {};
+        }
         const obj = JSON.parse(text);
         return obj;
     };
 
     const percentage = function(numerator, denumerator) {
-        if (!numerator || !denumerator || denumerator === 0) return 0;
+        if (!numerator || !denumerator || denumerator === 0) {
+            return 0;
+        }
         return (numerator / denumerator);
     };
 
@@ -64,7 +68,7 @@
 
     const origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function() {
-        this.addEventListener('load', function() {
+        this.addEventListener("load", function() {
             if (this.responseURL && this.responseURL.startsWith(urlToFollow)) {
                 const weeklyData = textToJsonObject(this.responseText);
                 main(weeklyData);
