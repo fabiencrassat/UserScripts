@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.4
+// @version      0.5
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
-// @include      /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/thisWeek/
+// @include      /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/([a-z])\w+/
 // @grant        none
 // ==/UserScript==
 
@@ -17,15 +17,7 @@
     const urlToFollow = "https://toggl.com/reports/api/v2/weekly.json";
     const displayLinesSelector = "table.data-table tr:not(:first, .subgroup, :last)";
     const displayColumnsSelector = "td[class^='day-'], td.col-total";
-    const decimalLenght = 3;
-
-    const textToJsonObject = function(text) {
-        if (!text) {
-            return {};
-        }
-        const obj = JSON.parse(text);
-        return obj;
-    };
+    const decimalLenght = 2;
 
     const percentage = function(numerator, denumerator) {
         if (!numerator || !denumerator || denumerator === 0) {
@@ -42,7 +34,21 @@
         return dataDay;
     };
 
-    const main = function(weeklyData) {
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function getDisplayLines() {
+        await sleep(1000); // Need to wait to the table built
+        const displayLines = $(displayLinesSelector);
+        if (!displayLines || displayLines.length === 0) {
+            console.warn('There is no display line', displayLines);
+            return {}
+        }
+        return displayLines;
+    };
+
+    async function main(weeklyData) {
         // Calculate
         var dataDaysPlusTotal = [];
         weekDaysPlusTotal.forEach(function(dayOrTotal, index) {
@@ -50,30 +56,39 @@
         });
 
         // Display
-        const displayLines = $(displayLinesSelector);
-        if (!displayLines || displayLines.length !== dataDaysPlusTotal[0].length) {
-            console.warn("There is not the same calculated and display lines.");
-            return;
-        }
-        displayLines.each(function(indexLine) {
-            const element = $(this).find(displayColumnsSelector);
-            element.each(function(indexColumn) {
-                const dataInCeil = dataDaysPlusTotal[indexColumn][displayLines.length - indexLine - 1];
-                if (dataInCeil !== 0) {
-                    $(this).append("<p>" + dataInCeil.toFixed(decimalLenght) + "</p>");
-                }
+        getDisplayLines().then(function(displayLines) {
+            if (displayLines.length !== dataDaysPlusTotal[0].length) {
+                console.warn("There is not the same calculated and display lines.", displayLines, dataDaysPlusTotal[0]);
+                return;
+            }
+            displayLines.each(function(indexLine) {
+                const element = $(this).find(displayColumnsSelector);
+                element.each(function(indexColumn) {
+                    const dataInCeil = dataDaysPlusTotal[indexColumn][displayLines.length - indexLine - 1];
+                    if (dataInCeil !== 0) {
+                        $(this).append("<p>" + dataInCeil.toFixed(decimalLenght) + "</p>");
+                    }
+                });
             });
         });
     };
 
-    const origOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function() {
-        this.addEventListener("load", function() {
-            if (this.responseURL && this.responseURL.startsWith(urlToFollow)) {
-                const weeklyData = textToJsonObject(this.responseText);
-                main(weeklyData);
+    console.info('== Toggl - Weekly report ==');
+    var oldFetch = fetch;  // must be on the global scope
+    fetch = function(url, options) {
+        var promise = oldFetch(url, options);
+        // Do something with the promise
+        promise.then(function(response) {
+            const responseClone = response.clone(); // clone to consume json body stream response
+            if (responseClone.ok && responseClone.status === 200 && responseClone.url && responseClone.url.startsWith(urlToFollow)) {
+                console.info('Url to follow found!');
+                responseClone.json().then(function(data) {
+                    main(data);
+                });
             }
+        }).catch(function(error) {
+            console.log('Error in fetch processing', error);
         });
-        origOpen.apply(this, arguments);
-    };
+        return promise;
+    }
 })();
