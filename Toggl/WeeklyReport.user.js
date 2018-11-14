@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.5
+// @version      0.6
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
-// @include      /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/([a-z])\w+/
+// @include      https://toggl.com/app/*
 // @grant        none
 // ==/UserScript==
 
@@ -14,7 +14,8 @@
     "use strict";
 
     const weekDaysPlusTotal = [0, 1, 2, 3, 4, 5, 6, 7];
-    const urlToFollow = "https://toggl.com/reports/api/v2/weekly.json";
+    const urlToFollow = /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/([a-z])\w+/;
+    const apiUrlToFollow = "https://toggl.com/reports/api/v2/weekly.json";
     const displayLinesSelector = "table.data-table tr:not(:first, .subgroup, :last)";
     const displayColumnsSelector = "td[class^='day-'], td.col-total";
     const decimalLenght = 2;
@@ -48,7 +49,7 @@
         return displayLines;
     };
 
-    async function main(weeklyData) {
+    async function calculateAndDisplay(weeklyData) {
         // Calculate
         var dataDaysPlusTotal = [];
         weekDaysPlusTotal.forEach(function(dayOrTotal, index) {
@@ -73,22 +74,34 @@
         });
     };
 
-    console.info('== Toggl - Weekly report ==');
-    var oldFetch = fetch;  // must be on the global scope
-    fetch = function(url, options) {
-        var promise = oldFetch(url, options);
-        // Do something with the promise
-        promise.then(function(response) {
-            const responseClone = response.clone(); // clone to consume json body stream response
-            if (responseClone.ok && responseClone.status === 200 && responseClone.url && responseClone.url.startsWith(urlToFollow)) {
-                console.info('Url to follow found!');
-                responseClone.json().then(function(data) {
-                    main(data);
+    const main = function(currentUrl) {
+        if (urlToFollow.test(currentUrl)) {
+            var oldFetch = fetch; // must be on the global scope
+            fetch = function(url, options) {
+                var promise = oldFetch(url, options);
+                // Do something with the promise
+                promise.then(function(response) {
+                    const responseClone = response.clone(); // clone to consume json body stream response
+                    if (responseClone.ok && responseClone.status === 200 && responseClone.url && responseClone.url.startsWith(apiUrlToFollow)) {
+                        console.info('Url to follow found!');
+                        responseClone.json().then(function(data) {
+                            calculateAndDisplay(data);
+                        });
+                    }
+                }).catch(function(error) {
+                    console.log('Error in fetch processing', error);
                 });
+                return promise;
             }
-        }).catch(function(error) {
-            console.log('Error in fetch processing', error);
-        });
-        return promise;
-    }
+        }
+    };
+
+    console.info('== Toggl - Weekly report ==');
+    // Follow the HTML5 url change in the API browser
+    (function (old) {
+        window.history.pushState = function () {
+            old.apply(window.history, arguments);
+            main(window.location.href);
+        }
+    })(window.history.pushState);
 })();
