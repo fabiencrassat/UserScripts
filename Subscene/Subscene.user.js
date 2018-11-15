@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Subscene
 // @namespace    https://github.com/fabiencrassat
-// @version      0.1
+// @version      0.1.1
 // @description  Filter with english language!
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://subscene.com/*

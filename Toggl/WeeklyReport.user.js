@@ -1,14 +1,16 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.6
+// @version      0.6.1
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
 // @grant        none
 // ==/UserScript==
 
-/** global: $, console */
+/*global $, console */
+
+/*eslint no-console: ["error", { allow: ["info", "warn", "error"] }] */
 
 (function() {
     "use strict";
@@ -36,18 +38,18 @@
     };
 
     function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     async function getDisplayLines() {
         await sleep(1000); // Need to wait to the table built
         const displayLines = $(displayLinesSelector);
         if (!displayLines || displayLines.length === 0) {
-            console.warn('There is no display line', displayLines);
-            return {}
+            console.warn("There is no display line", displayLines);
+            return {};
         }
         return displayLines;
-    };
+    }
 
     async function calculateAndDisplay(weeklyData) {
         // Calculate
@@ -72,7 +74,7 @@
                 });
             });
         });
-    };
+    }
 
     const main = function(currentUrl) {
         if (urlToFollow.test(currentUrl)) {
@@ -83,25 +85,25 @@
                 promise.then(function(response) {
                     const responseClone = response.clone(); // clone to consume json body stream response
                     if (responseClone.ok && responseClone.status === 200 && responseClone.url && responseClone.url.startsWith(apiUrlToFollow)) {
-                        console.info('Url to follow found!');
+                        console.info("Url to follow found!");
                         responseClone.json().then(function(data) {
                             calculateAndDisplay(data);
                         });
                     }
                 }).catch(function(error) {
-                    console.log('Error in fetch processing', error);
+                    console.error("Error in fetch processing", error);
                 });
                 return promise;
-            }
+            };
         }
     };
 
-    console.info('== Toggl - Weekly report ==');
+    console.info("== Toggl - Weekly report ==");
     // Follow the HTML5 url change in the API browser
     (function (old) {
         window.history.pushState = function () {
             old.apply(window.history, arguments);
             main(window.location.href);
-        }
+        };
     })(window.history.pushState);
 })();
