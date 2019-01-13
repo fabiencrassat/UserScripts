@@ -106,4 +106,4 @@
             main(window.location.href);
         };
     })(window.history.pushState);
-})();
+}());
