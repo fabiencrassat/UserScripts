@@ -105,5 +105,5 @@
             old.apply(window.history, arguments);
             main(window.location.href);
         };
-    })(window.history.pushState);
+    }(window.history.pushState));
 }());

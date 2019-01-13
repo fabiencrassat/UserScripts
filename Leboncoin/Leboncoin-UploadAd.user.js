@@ -40,7 +40,7 @@
         }
       });
     }
-  }
+  };
 
   const mapping = {
     "Catégorie *": {
