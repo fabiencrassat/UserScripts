@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UploadAdInLeBonCoin
 // @namespace    https://github.com/fabiencrassat
-// @version      0.0.2
+// @version      0.0.3
 // @description  Upload an advertisement json file into LeBonCoin site
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.leboncoin.fr/ai/form/*

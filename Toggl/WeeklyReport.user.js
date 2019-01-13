@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.6.1
+// @version      0.6.2
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
