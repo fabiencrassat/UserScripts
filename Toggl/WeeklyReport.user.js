@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.6.2
+// @version      0.6.3
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -12,6 +12,11 @@
 
 /*eslint no-console: ["error", { allow: ["info", "warn", "error"] }] */
 
+/**
+ * Remark:
+ * The api url is not followed with refresh, need to go and back in the site
+ */
+
 (function() {
     "use strict";
 
@@ -19,7 +24,7 @@
     const urlToFollow = /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/([a-z])\w+/;
     const apiUrlToFollow = "https://toggl.com/reports/api/v2/weekly.json";
     const displayLinesSelector = "table.data-table tr:not(:first, .subgroup, :last)";
-    const displayColumnsSelector = "td[class^='day-'], td.col-total";
+    const displayColumnsSelector = "td[class^='day-']:not(:has('.fcr-percentage')), td.col-total:not(:has('.fcr-percentage'))";
     const decimalLenght = 2;
 
     const percentage = function(numerator, denumerator) {
@@ -69,7 +74,7 @@
                 element.each(function(indexColumn) {
                     const dataInCeil = dataDaysPlusTotal[indexColumn][displayLines.length - indexLine - 1];
                     if (dataInCeil !== 0) {
-                        $(this).append("<p>" + dataInCeil.toFixed(decimalLenght) + "</p>");
+                        $(this).append("<p class='fcr-percentage'>" + dataInCeil.toFixed(decimalLenght) + "</p>");
                     }
                 });
             });
@@ -84,8 +89,9 @@
                 // Do something with the promise
                 promise.then(function(response) {
                     const responseClone = response.clone(); // clone to consume json body stream response
-                    if (responseClone.ok && responseClone.status === 200 && responseClone.url && responseClone.url.startsWith(apiUrlToFollow)) {
-                        console.info("Url to follow found!");
+                    const url = response.url;
+                    if (responseClone.ok && responseClone.status === 200 && url && url.startsWith(apiUrlToFollow)) {
+                        console.info("Url to follow found!", url);
                         responseClone.json().then(function(data) {
                             calculateAndDisplay(data);
                         });
