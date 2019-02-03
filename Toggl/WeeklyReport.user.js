@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.7.0
+// @version      0.7.1
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -66,7 +66,7 @@ const calculate = function(weeklyData) {
 
     let result = [];
     weeklyData.data.forEach(function(data, index) {
-        let dataDayPlusTotal = dataDaysPlusTotal.map(value => value[index]);
+        let dataDayPlusTotal = dataDaysPlusTotal.map((value) => value[index]);
         result.push({ client: data.title.client, project: data.title.project, data: dataDayPlusTotal });
     });
 
@@ -75,10 +75,10 @@ const calculate = function(weeklyData) {
 
 const filterDataFromProject = function(data, lineElement) {
     const text = $(lineElement).find(".col-grouping").text();
-    if (text.trim() === '(no project)') {
-        return data.find(value => value.project === null && value.client === null);
+    if (text.trim() === "(no project)") {
+        return data.find((value) => value.project === null && value.client === null);
     }
-    return data.find(value => value.project + " " + value.client === text);
+    return data.find((value) => value.project + " " + value.client === text);
 }
 
 const displayInTheLine = function(lineElement, data) {
@@ -97,7 +97,7 @@ const display = function(data = []) {
         return;
     }
     displayLines.each(function() {
-        displayInTheLine(this, filterDataFromProject(data, this))
+        displayInTheLine(this, filterDataFromProject(data, this));
     });
 }
 
@@ -109,14 +109,16 @@ const calculateAndDisplay = async function(data) {
 
 const response = function(response) {
     const responseClone = response.clone(); // clone to consume json body stream response
+    if(!responseClone.ok || responseClone.status !== 200) return;
+    
     const url = response.url;
-    if (responseClone.ok && responseClone.status === 200 && url && url.startsWith(apiUrlToFollow)) {
+    if (url && url.startsWith(apiUrlToFollow)) {
         console.info("Url to follow found!", url);
         responseClone.json().then(calculateAndDisplay);
     }
 }
 
-const fireOnChange = function(url = '') {
+const fireOnChange = function(url = "") {
     // Check if we are in the good page
     if (urlToFollow.test(url)) {
         buildFetch(response);
@@ -124,7 +126,7 @@ const fireOnChange = function(url = '') {
     }
     backFetch();
     return false;
-}
+};
 
 console.info("== Toggl - Weekly report ==");
 // Follow the HTML5 url change in the API browser
