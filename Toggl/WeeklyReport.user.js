@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.7.2
+// @version      0.7.3
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -35,7 +35,7 @@ const backFetch = function() {
     fetch = oldFetch;
 };
 
-function sleep() {
+const sleep = function() {
     return new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
