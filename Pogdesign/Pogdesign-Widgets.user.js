@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.3.5
+// @version      1.3.6
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -151,7 +151,7 @@ var page = function() {
                 }`;
             },
             extractTitle() {
-                return $("h2.sumhead > a").text();
+                return $("h2.sumhead > a").text().replace(/  Summary & Series Guide/g,'');;
             },
             extractSeasonAndEpisode(element) {
                 var seasonAndEpisodeElement = element.parent().parent().parent();
