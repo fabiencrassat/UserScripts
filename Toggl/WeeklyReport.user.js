@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.8.0
+// @version      0.8.1
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -24,12 +24,6 @@ const debugMode = false;
 let projects = [];
 
 var oldFetch = fetch; // must be on the global scope
-
-const consoleDebug = function() {
-  if (debugMode) {
-    console.log(arguments);
-  }
-}
 
 const buildFetch = function(doSomethingWithResponse) {
     fetch = function(url, options) {
@@ -61,7 +55,6 @@ const percentage = function(numerator, denumerator) {
 };
 
 const calculate = function(weeklyData) {
-    consoleDebug('calculate', weeklyData);
     /**
      * The weeklyData argument in the V3 API has this values
      * [
@@ -109,17 +102,16 @@ const calculate = function(weeklyData) {
     weeklyData.forEach(function(line) {
       let data = [];
       line.seconds.forEach(function(day, index) {
-        data.push(percentage(day, daysSum[index]))
+        data.push(percentage(day, daysSum[index]));
       });
       result.push({
-        client: '',
-        project: projects.find(project => project.id === line.project_id).name,
+        client: "",
+        project: projects.find((project) => project.id === line.project_id).name,
         data: data,
         conso: percentage(projectSum[line.project_id], weekSum)
       });
     });
 
-    consoleDebug('calculate', result);
     return result;
 };
 
@@ -166,10 +158,10 @@ const calculateAndDisplay = async function(data) {
 };
 
 const fillProjects = async function(data = []) {
-    projects = data.map(project => {
-        return { id: project.id, name: project.name, clientId : project.client_id }
-    })
-}
+    projects = data.map((project) => {
+        return { id: project.id, name: project.name, clientId : project.client_id };
+    });
+};
 
 const checkResponseAndUrl = function(response, url, apiRUl) {
     return response.ok && response.status === 200 && url && url.startsWith(apiRUl);
@@ -191,11 +183,9 @@ const response = function(response) {
 const fireOnChange = function(url = "") {
     // Check if we are in the good page
     if (urlToFollow.test(url)) {
-        consoleDebug('It is the good url', url);
         buildFetch(response);
         return true;
     }
-    consoleDebug('It is not the good url', url);
     backFetch();
     return false;
 };
