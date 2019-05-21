@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.8.1
+// @version      0.8.2
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -104,9 +104,11 @@ const calculate = function(weeklyData) {
       line.seconds.forEach(function(day, index) {
         data.push(percentage(day, daysSum[index]));
       });
+      const project = projects.find((project) => project.id === line.project_id);
+      const projectName = project ? project.name : null;
       result.push({
         client: "",
-        project: projects.find((project) => project.id === line.project_id).name,
+        project: projectName,
         data: data,
         conso: percentage(projectSum[line.project_id], weekSum)
       });
@@ -117,8 +119,8 @@ const calculate = function(weeklyData) {
 
 const filterDataFromProject = function(data, lineElement) {
     const text = $(lineElement).find(".css-70qvj9.efdmxuc2 > span:first-child").text();
-    if (text.trim() === "(no project)") {
-        return data.find((value) => value.project === null && value.client === null);
+    if (text.trim() === "Without project") {
+        return data.find((value) => value.project === null);
     }
     return data.find((value) => value.project === text);
 };
