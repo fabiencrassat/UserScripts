@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.3.7
+// @version      1.3.8
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
