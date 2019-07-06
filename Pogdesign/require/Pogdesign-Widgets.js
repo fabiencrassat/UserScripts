@@ -107,11 +107,14 @@ var view = function() {
                     {name: "megaddl",
                         url() { return "https://megaddl.co/?s=" + tools.encodeURL(show.getSearch()); }
                     },
-                    {name: "reddit",
-                        url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()) + "&restrict_sr=on"; }
-                    },
                     {name: "yourserie",
                         url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()) + "+season+" + tools.encodeURL(show.getSeason()); }
+                    },
+                    {name: "todaytvseries2",
+                        url() { return "http://www.todaytvseries2.com/search-series?searchword=" + tools.encodeURL(show.getTitle()); }
+                    },
+                    {name: "reddit",
+                        url() { return "https://www.reddit.com/r/megalinks/search?q=" + tools.encodeURL(show.getSearch()) + "&restrict_sr=on"; }
                     },
                     {name: "binsearch",
                         url() { return "https://binsearch.info/?q=" + tools.encodeURL(show.getSearch()); }
