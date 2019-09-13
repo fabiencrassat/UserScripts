@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.8.2
+// @version      0.8.3
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -127,7 +127,11 @@ const filterDataFromProject = function(data, lineElement) {
 
 const displayInTheLine = function(lineElement, data) {
     // For each line, select only days and total columns
-    const columns = $(lineElement).find(".css-1xn8q1e.euf6jrl1");
+    const columns = $(lineElement).find(".css-7ajft7.euf6jrl1");
+    if (columns.length <= 0) {
+        console.warn("There is no display column", columns);
+        return;
+    }
     columns.each(function(indexColumn) {
         let dataInCeil = 0;
         if (columns.length === indexColumn + 1) {
