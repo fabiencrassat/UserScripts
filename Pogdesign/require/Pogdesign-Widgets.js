@@ -1,6 +1,6 @@
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.2
+// @version      1.0.3
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -108,7 +108,7 @@ var view = function() {
                         url() { return "https://megaddl.co/?s=" + tools.encodeURL(show.getSearch()); }
                     },
                     {name: "yourserie",
-                        url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()) + "+season+" + tools.encodeURL(show.getSeason()); }
+                        url() { return "http://www.yourserie.com/?s=" + tools.encodeURL(show.getTitle()); }
                     },
                     {name: "todaytvseries2",
                         url() { return "http://www.todaytvseries2.com/search-series?searchword=" + tools.encodeURL(show.getTitle()); }
@@ -125,6 +125,9 @@ var view = function() {
                 sites : [
                     {name: "subscene",
                         url() { return "https://subscene.com/subtitles/release?q=" + tools.encodeURL(show.getSearch()); }
+                    },
+                    {name: "subtitlecat",
+                        url() { return "https://www.subtitlecat.com/index.php?search=" + tools.encodeURL(show.getSearch()); }
                     }
                 ]
             }
