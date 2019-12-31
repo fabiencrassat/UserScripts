@@ -1,6 +1,6 @@
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.3
+// @version      1.0.4
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -44,7 +44,9 @@ var model = function() {
         season: "",
         episode: "",
         getTitle() { return show.title; },
-        setTitle(title) { show.title = title; },
+        setTitle(title) {
+            show.title = title.replace('.', '');
+        },
         getSeason() { return show.season; },
         setSeason(season) {
             show.season = tools.addZeroToOneNumber(season);
