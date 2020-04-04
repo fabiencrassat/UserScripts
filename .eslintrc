@@ -19,6 +19,7 @@
     "dot-location": ["error", "property"],
     "function-call-argument-newline": ["error", "consistent"],
     "indent": ["error", 2],
+    "lines-around-comment": ["error", { "allowBlockStart": true }],
     "multiline-comment-style": ["error", "separate-lines"],
     "no-console": [
       "error",
