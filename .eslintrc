@@ -1,0 +1,36 @@
+{
+  "extends": [
+    "eslint:all"
+  ],
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2020": true
+  },
+  "rules": {
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "curly": [
+      "error",
+      "all"
+    ],
+    "dot-location": ["error", "property"],
+    "function-call-argument-newline": ["error", "consistent"],
+    "indent": ["error", 2],
+    "multiline-comment-style": ["error", "separate-lines"],
+    "no-console": [
+      "error",
+      {
+        "allow": ["error", "warn", "info"]
+      }
+    ],
+    "object-curly-spacing": ["error", "always"],
+    "one-var": ["error", { "var": "always", "let": "never", "const": "never" }],
+    "padded-blocks": ["error", "never"],
+    "quote-props": ["error", "as-needed"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "space-before-function-paren": ["error", "never"]
+  }
+}
