@@ -30,7 +30,7 @@ const pages = function pages() {
     calendar: {
       displayExternalLinksPopup(element) {
         const popup = externalLinks
-          .create(element, 'fcr-calendar-page', 'block');
+          .create('fcr-calendar-page', 'block');
         element
           .parent()
           .parent()
@@ -136,7 +136,7 @@ const pages = function pages() {
     episode: {
       displayExternalLinksPopup(element) {
         const popup = externalLinks
-          .create(element, 'fcr-external-links-popup', 'inline-flex');
+          .create('fcr-external-links-popup', 'inline-flex');
         element
           .after(popup);
       },
@@ -165,12 +165,14 @@ const pages = function pages() {
     },
     summary: {
       displayExternalLinksPopup(element) {
-        // eslint-disable-next-line no-magic-numbers
-        const top = element.offset().top + 20;
-        // eslint-disable-next-line no-magic-numbers
-        const left = element.offset().left - 200;
+        const position = {
+          // eslint-disable-next-line no-magic-numbers
+          left: element.offset().left - 200,
+          // eslint-disable-next-line no-magic-numbers
+          top: element.offset().top + 20
+        };
         const popup = externalLinks
-          .create(element, 'fcr-external-links-popup', 'block', top, left);
+          .create('fcr-external-links-popup', 'block', position);
         $('body > div:last')
           .after(popup);
       },
