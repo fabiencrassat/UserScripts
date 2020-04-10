@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.8.4
+// @version      0.8.5
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -144,6 +144,14 @@ const displayValue = function displayValue(value) {
   return `<p class="fcr-toggl">${value}</p>`;
 };
 
+const getDataValue = function getDataValue(columnsLength, indexColumn, data) {
+  // eslint-disable-next-line no-magic-numbers
+  if (columnsLength === indexColumn + 1) {
+    return data.conso || 0;
+  }
+  return data.data[indexColumn] || 0;
+}
+
 const displayInTheLine = function displayInTheLine(lineElement, data) {
   // For each line, select only days and total columns
   const columns = $(lineElement).find('.euf6jrl1');
@@ -153,13 +161,7 @@ const displayInTheLine = function displayInTheLine(lineElement, data) {
     return;
   }
   columns.each(function displayColumn(indexColumn) {
-    let dataInCeil = 0;
-    // eslint-disable-next-line no-magic-numbers
-    if (columns.length === indexColumn + 1) {
-      dataInCeil = data.conso;
-    } else {
-      dataInCeil = data.data[indexColumn];
-    }
+    const dataInCeil = getDataValue(columns.length, indexColumn, data);
     // eslint-disable-next-line no-magic-numbers
     if (dataInCeil !== 0) {
       // eslint-disable-next-line no-invalid-this
