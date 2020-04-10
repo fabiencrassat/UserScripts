@@ -146,7 +146,7 @@ const displayValue = function displayValue(value) {
 
 const displayInTheLine = function displayInTheLine(lineElement, data) {
   // For each line, select only days and total columns
-  const columns = $(lineElement).find('.css-bqg0jw.euf6jrl1');
+  const columns = $(lineElement).find('.euf6jrl1');
   // eslint-disable-next-line no-magic-numbers
   if (columns.length <= 0) {
     console.warn('There is no display column', columns);
