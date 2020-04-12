@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Toggl - Weekly report
 // @namespace    https://github.com/fabiencrassat
-// @version      0.8.5
+// @version      0.8.6
 // @description  Calculate and display the work day percentages
 // @author       Fabien Crassat <fabien@crassat.com>
 // @include      https://toggl.com/app/*
@@ -14,8 +14,23 @@
 
 'use strict';
 
-// eslint-disable-next-line array-element-newline, no-magic-numbers
-const weekDays = [0, 1, 2, 3, 4, 5, 6];
+const weekDaySunday = 0;
+const weekDayMonday = 1;
+const weekDayTuesday = 2;
+const weekDayWednesday = 3;
+const weekDayThursday = 4;
+const weekDayFriday = 5;
+const weekDaySaturday = 6;
+
+const weekDays = [
+  weekDaySunday,
+  weekDayMonday,
+  weekDayTuesday,
+  weekDayWednesday,
+  weekDayThursday,
+  weekDayFriday,
+  weekDaySaturday
+];
 // eslint-disable-next-line max-len, prefer-named-capture-group
 const urlToFollow = /^https:\/\/toggl\.com\/app\/reports\/weekly\/\d+\/period\/([a-z])\w+/u;
 // eslint-disable-next-line max-len
@@ -46,8 +61,8 @@ const backFetch = function backFetch() {
 };
 
 const sleep = function sleep() {
-  // eslint-disable-next-line no-magic-numbers
-  return new Promise(resolve => setTimeout(resolve, 1500));
+  const timeout = 1500;
+  return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
 const cleanDisplay = function cleanDisplay() {
@@ -101,8 +116,8 @@ const calculate = function calculate(weeklyData) {
     projectSum[line.project_id] = line.seconds.reduce((acc, cur) => acc + cur);
     // Sum the days
     weekDays.forEach(day => {
-      // eslint-disable-next-line no-magic-numbers
-      daysSum[day] = (daysSum[day] || 0) + line.seconds[day];
+      const initialValue = 0;
+      daysSum[day] = (daysSum[day] || initialValue) + line.seconds[day];
     });
   });
 
@@ -144,13 +159,15 @@ const displayValue = function displayValue(value) {
   return `<p class="fcr-toggl">${value}</p>`;
 };
 
+const defaultDataValue = 0;
+
 const getDataValue = function getDataValue(columnsLength, indexColumn, data) {
   // eslint-disable-next-line no-magic-numbers
   if (columnsLength === indexColumn + 1) {
-    return data.conso || 0;
+    return data.conso || defaultDataValue;
   }
-  return data.data[indexColumn] || 0;
-}
+  return data.data[indexColumn] || defaultDataValue;
+};
 
 const displayInTheLine = function displayInTheLine(lineElement, data) {
   // For each line, select only days and total columns
@@ -162,8 +179,7 @@ const displayInTheLine = function displayInTheLine(lineElement, data) {
   }
   columns.each(function displayColumn(indexColumn) {
     const dataInCeil = getDataValue(columns.length, indexColumn, data);
-    // eslint-disable-next-line no-magic-numbers
-    if (dataInCeil !== 0) {
+    if (dataInCeil !== defaultDataValue) {
       // eslint-disable-next-line no-invalid-this
       $(this).append(displayValue(dataInCeil.toFixed(decimalLenght)));
     }
@@ -204,9 +220,9 @@ const checkResponseAndUrl = function checkResponseAndUrl(
   url,
   apiRUl
 ) {
+  const responseStatus200 = 200;
   return response.ok &&
-    // eslint-disable-next-line no-magic-numbers
-    response.status === 200 &&
+    response.status === responseStatus200 &&
     url &&
     url.startsWith(apiRUl);
 };

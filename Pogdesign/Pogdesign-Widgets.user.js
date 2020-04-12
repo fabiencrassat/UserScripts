@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pogdesign-Widgets
 // @namespace    https://github.com/fabiencrassat
-// @version      1.3.11
+// @version      1.3.12
 // @description  Add links relative to the episode
 // @author       Fabien Crassat <fabien@crassat.com>
 // @match        https://www.pogdesign.co.uk/cat/
@@ -165,11 +165,11 @@ const pages = function pages() {
     },
     summary: {
       displayExternalLinksPopup(element) {
+        const offsetLeft = -200;
+        const offsetTop = 20;
         const position = {
-          // eslint-disable-next-line no-magic-numbers
-          left: element.offset().left - 200,
-          // eslint-disable-next-line no-magic-numbers
-          top: element.offset().top + 20
+          left: element.offset().left + offsetLeft,
+          top: element.offset().top + offsetTop
         };
         const popup = externalLinks
           .create('fcr-external-links-popup', 'block', position);

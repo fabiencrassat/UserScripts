@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.5
+// @version      1.0.6
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -9,17 +9,19 @@
 'use strict';
 
 const checkProtocol = function checkProtocol() {
-  if (location.protocol === 'http:') {
-    // eslint-disable-next-line no-magic-numbers
-    window.location.replace(`https:${window.location.href.substring(5)}`);
+  const http = 'http:';
+  const httpLenght = http.length;
+  const https = 'https:';
+  if (location.protocol === http) {
+    window.location.replace(https + window.location.href.substring(httpLenght));
   }
 };
 checkProtocol();
 
 const mainTools = function mainTools() {
   const addZeroToOneNumber = function addZeroToOneNumber(number) {
-    // eslint-disable-next-line no-magic-numbers
-    if (number.length < 2) {
+    const maxNumberLenght = 2;
+    if (number.length < maxNumberLenght) {
       return `0${number}`;
     }
     return number;
@@ -71,25 +73,30 @@ const model = function model() {
       show.season = tools.addZeroToOneNumber(season);
     },
     setSeasonAndEpisode(...args) {
-      // eslint-disable-next-line no-magic-numbers
-      if (args.length === 1) {
-        // eslint-disable-next-line prefer-named-capture-group
-        const regex = /^s(\d{1,})e(\d{1,})/giu;
+      const increment = 1;
+      let maxArgsNumber = 1;
+      if (args.length === maxArgsNumber) {
         // eslint-disable-next-line no-magic-numbers
-        show.setSeason(args[0].replace(regex, '$1'));
-        // eslint-disable-next-line no-magic-numbers
-        show.setEpisode(args[0].replace(regex, '$2'));
+        show.setSeasonAndEpisodeWithOneArgument(args[0]);
         return;
       }
-      // eslint-disable-next-line no-magic-numbers
-      if (args.length === 2) {
+      maxArgsNumber += increment;
+      if (args.length === maxArgsNumber) {
         // eslint-disable-next-line no-magic-numbers
-        show.setSeason(args[0]);
-        // eslint-disable-next-line no-magic-numbers
-        show.setEpisode(args[1]);
+        show.setSeasonAndEpisodeWithTwoArgument(args[0], args[1]);
         return;
       }
       throw new RangeError('Exception in setSeasonAndEpisode');
+    },
+    setSeasonAndEpisodeWithOneArgument(seasonAndEpisode) {
+      // eslint-disable-next-line prefer-named-capture-group
+      const regex = /^s(\d{1,})e(\d{1,})/giu;
+      show.setSeason(seasonAndEpisode.replace(regex, '$1'));
+      show.setEpisode(seasonAndEpisode.replace(regex, '$2'));
+    },
+    setSeasonAndEpisodeWithTwoArgument(season, episode) {
+      show.setSeason(season);
+      show.setEpisode(episode);
     },
     setTitle(title) {
       show.title = title.replace('.', '');
@@ -166,22 +173,19 @@ const view = function view() {
     },
     getLinks() {
       let links = '<span>';
-      // eslint-disable-next-line max-len, no-magic-numbers
-      for (let linkPosition = 0; linkPosition < this.links.length; linkPosition += 1) {
-        links += `${this.links[linkPosition].name}: `;
-        // eslint-disable-next-line max-len, no-magic-numbers
-        for (let sitePosition = 0; sitePosition < this.links[linkPosition].sites.length; sitePosition += 1) {
-          // eslint-disable-next-line no-magic-numbers
-          if (sitePosition !== 0) {
+      this.links.forEach(link => {
+        links += `${link.name}: `;
+        link.sites.forEach((site, index) => {
+          const firstIndex = 0;
+          if (index !== firstIndex) {
             links += ' | ';
           }
-          // eslint-disable-next-line max-len
-          links += `<a target="_blank" href="${this.links[linkPosition].sites[sitePosition].url()}">
-            ${this.links[linkPosition].sites[sitePosition].name}
+          links += `<a target="_blank" href="${site.url()}">
+            ${site.name}
           </a>`;
-        }
+        });
         links += '<br/>';
-      }
+      }, links);
       links += '</span>';
       return links;
     },
@@ -245,11 +249,11 @@ const view = function view() {
     removeOnOutsideClickEvent() {
       $(document).mouseup(event => {
         const container = popup.getContainer();
-        // eslint-disable-next-line max-len
-        // If the target of the click isn't the container nor a descendant of the container
+        const noEventTarget = 0;
+        // If the target of the click isn't the container
+        // Nor a descendant of the container
         if (!container.is(event.target) &&
-        // eslint-disable-next-line no-magic-numbers
-        container.has(event.target).length === 0) {
+        container.has(event.target).length === noEventTarget) {
           container.remove();
         }
       });
@@ -287,8 +291,8 @@ const main = function main() {
         if (!isInLocationPage()) {
           return false;
         }
-        // eslint-disable-next-line no-magic-numbers
-        if ($(element).length === 0) {
+        const noElementValue = 0;
+        if ($(element).length === noElementValue) {
           return false;
         }
         return true;
