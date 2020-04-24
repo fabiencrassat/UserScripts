@@ -254,7 +254,7 @@ const view = function view() {
         // Nor a descendant of the container
         if (!container.is(event.target) &&
         container.has(event.target).length === noEventTarget) {
-          container.remove();
+          this.close();
         }
       });
     }
