@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 // @name         Pogdesign-Widgets.require
 // @namespace    https://github.com/fabiencrassat
-// @version      1.0.6
+// @version      1.1.0
 // @description  Add the core object for the Pogdesign-Widgets.user.js
 // @author       Fabien Crassat <fabien@crassat.com>
 
@@ -121,7 +121,29 @@ const view = function view() {
   const tools = fabiencrassat.mainTools;
   const { show } = fabiencrassat.model;
 
+  let externalLinks = '';
+  // eslint-disable-next-line max-len
+  fetch('https://raw.githubusercontent.com/fabiencrassat/UserScripts/master/Pogdesign/require/externalLinks.json', {
+    method: 'get'
+  }).then(response => response.json())
+    .then(data => {
+      externalLinks = data;
+    })
+    .catch(err => console.error(err));
+
   const popup = {
+    buildUrl(url) {
+      // eslint-disable-next-line prefer-named-capture-group
+      const regexGetSearch = /\$\{getSearch\}/gu;
+      if (regexGetSearch.test(url)) {
+        return url.replace(regexGetSearch, tools.encodeURL(show.getSearch()));
+      }
+      const regexGetTitle = /\$\{getTitle\}/gu;
+      if (regexGetTitle.test(url)) {
+        return url.replace(regexGetTitle, tools.encodeURL(show.getTitle()));
+      }
+      return url;
+    },
     close() {
       const container = popup.getContainer();
       if (container) {
@@ -173,14 +195,14 @@ const view = function view() {
     },
     getLinks() {
       let links = '<span>';
-      this.links.forEach(link => {
+      externalLinks.forEach(link => {
         links += `${link.name}: `;
         link.sites.forEach((site, index) => {
           const firstIndex = 0;
           if (index !== firstIndex) {
             links += ' | ';
           }
-          links += `<a target="_blank" href="${site.url()}">
+          links += `<a target="_blank" href="${this.buildUrl(site.url)}">
             ${site.name}
           </a>`;
         });
@@ -189,62 +211,6 @@ const view = function view() {
       links += '</span>';
       return links;
     },
-    links: [
-      { name: 'Streaming',
-        sites: [
-          { name: 'google',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://www.google.fr/search?q=${tools.encodeURL(show.getSearch())}+vostfr+streaming`;
-            } }
-        ] },
-      { name: 'Download',
-        sites: [
-          { name: 'direct',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://www.google.fr/search?q=${tools.encodeURL(show.getSearch())}+direct+download+-torrent`;
-            } },
-          { name: 'megaddl',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://megaddl.co/?s=${tools.encodeURL(show.getSearch())}`;
-            } },
-          { name: 'yourserie',
-            url() {
-              // eslint-disable-next-line max-len
-              return `http://www.yourserie.com/?s=${tools.encodeURL(show.getTitle())}`;
-            } },
-          { name: 'todaytvseries2',
-            url() {
-              // eslint-disable-next-line max-len
-              return `http://www.todaytvseries2.com/search-series?searchword=${tools.encodeURL(show.getTitle())}`;
-            } },
-          { name: 'reddit',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://www.reddit.com/r/megalinks/search?q=${tools.encodeURL(show.getSearch())}&restrict_sr=on`;
-            } },
-          { name: 'binsearch',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://binsearch.info/?q=${tools.encodeURL(show.getSearch())}`;
-            } }
-        ] },
-      { name: 'Subtitle',
-        sites: [
-          { name: 'subscene',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://subscene.com/subtitles/release?q=${tools.encodeURL(show.getSearch())}`;
-            } },
-          { name: 'subtitlecat',
-            url() {
-              // eslint-disable-next-line max-len
-              return `https://www.subtitlecat.com/index.php?search=${tools.encodeURL(show.getSearch())}`;
-            } }
-        ] }
-    ],
     popupId: 'fcr-external-links-element',
     removeOnOutsideClickEvent() {
       $(document).mouseup(event => {
