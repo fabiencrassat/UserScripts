@@ -1,0 +1,29 @@
+[
+  { "name": "Streaming",
+    "sites": [
+      { "name": "google",
+        "url": "https://www.google.fr/search?q=${1}+vostfr+streaming" }
+    ] },
+  { "name": "Download",
+    "sites": [
+      { "name": "direct",
+        "url": "https://www.google.fr/search?q=${1}+direct+download+-torrent" },
+      { "name": "megaddl",
+        "url": "https://megaddl.co/?s=${1}" },
+      { "name": "yourserie",
+        "url": "http://www.yourserie.com/?s=${1}" },
+      { "name": "todaytvseries2",
+        "url": "http://www.todaytvseries2.com/search-series?searchword=${1}" },
+      { "name": "reddit",
+        "url": "https://www.reddit.com/r/megalinks/search?q=${1}&restrict_sr=on" },
+      { "name": "binsearch",
+        "url": "https://binsearch.info/?q=${1}" }
+    ] },
+  { "name": "Subtitle",
+    "sites": [
+      { "name": "subscene",
+        "url": "https://subscene.com/subtitles/release?q=${1}" },
+      { "name": "subtitlecat",
+        "url": "https://www.subtitlecat.com/index.php?search=${1}" }
+    ] }
+]
