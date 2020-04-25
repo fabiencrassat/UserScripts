@@ -1,29 +1,53 @@
 [
-  { "name": "Streaming",
+  {
+    "name": "Streaming",
     "sites": [
-      { "name": "google",
-        "url": "https://www.google.fr/search?q=${getSearch}+vostfr+streaming" }
-    ] },
-  { "name": "Download",
+      {
+        "name": "google",
+        "url": "https://www.google.fr/search?q=${getSearch}+vostfr+streaming"
+      }
+    ]
+  },
+  {
+    "name": "Download",
     "sites": [
-      { "name": "direct",
-        "url": "https://www.google.fr/search?q=${getSearch}+direct+download+-torrent" },
-      { "name": "megaddl",
-        "url": "https://megaddl.co/?s=${getSearch}" },
-      { "name": "yourserie",
-        "url": "http://www.yourserie.com/?s=${getTitle}" },
-      { "name": "todaytvseries2",
-        "url": "http://www.todaytvseries2.com/search-series?searchword=${getTitle}" },
-      { "name": "reddit",
-        "url": "https://www.reddit.com/r/megalinks/search?q=${getSearch}&restrict_sr=on" },
-      { "name": "binsearch",
-        "url": "https://binsearch.info/?q=${getSearch}" }
-    ] },
-  { "name": "Subtitle",
+      {
+        "name": "direct",
+        "url": "https://www.google.fr/search?q=${getSearch}+direct+download+-torrent"
+      },
+      {
+        "name": "megaddl",
+        "url": "https://megaddl.co/?s=${getSearch}"
+      },
+      {
+        "name": "yourserie",
+        "url": "http://www.yourserie.com/?s=${getTitle}"
+      },
+      {
+        "name": "todaytvseries2",
+        "url": "http://www.todaytvseries2.com/search-series?searchword=${getTitle}"
+      },
+      {
+        "name": "reddit",
+        "url": "https://www.reddit.com/r/megalinks/search?q=${getSearch}&restrict_sr=on"
+      },
+      {
+        "name": "binsearch",
+        "url": "https://binsearch.info/?q=${getSearch}"
+      }
+    ]
+  },
+  {
+    "name": "Subtitle",
     "sites": [
-      { "name": "subscene",
-        "url": "https://subscene.com/subtitles/release?q=${getSearch}" },
-      { "name": "subtitlecat",
-        "url": "https://www.subtitlecat.com/index.php?search=${getSearch}" }
-    ] }
+      {
+        "name": "subscene",
+        "url": "https://subscene.com/subtitles/release?q=${getSearch}"
+      },
+      {
+        "name": "subtitlecat",
+        "url": "https://www.subtitlecat.com/index.php?search=${getSearch}"
+      }
+    ]
+  }
 ]

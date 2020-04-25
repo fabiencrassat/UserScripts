@@ -5,7 +5,8 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es2020": true
+    "es2020": true,
+    "node": true
   },
   "rules": {
     "arrow-parens": [
