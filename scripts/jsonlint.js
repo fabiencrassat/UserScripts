@@ -4,7 +4,6 @@ const getJsonFiles = require('./lib/getJsonFiles');
 const { execSync } = require('child_process');
 const path = require('path');
 
-// eslint-disable-next-line max-statements
 const execJsonLint = function execJsonLint(jsonFiles) {
   let throwError = false;
   for (const file of jsonFiles) {
