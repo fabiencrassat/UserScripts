@@ -133,23 +133,21 @@ const view = function view() {
 
   const popup = {
     buildUrl(url) {
+      let buildUrl = url;
       // eslint-disable-next-line prefer-named-capture-group
-      const regexGetSearch = /\$\{getSearch\}/gu;
-      if (regexGetSearch.test(url)) {
-        return url.replace(regexGetSearch, tools.encodeURL(show.getSearch()));
-      }
-      const regexGetTitle = /\$\{getTitle\}/gu;
-      if (regexGetTitle.test(url)) {
-        return url.replace(regexGetTitle, tools.encodeURL(show.getTitle()));
-      }
-      const regexGetSeasonAndEpisode = /\$\{getSeasonAndEpisode\}/gu;
-      if (regexGetSeasonAndEpisode.test(url)) {
-        return url.replace(
-          regexGetSeasonAndEpisode,
-          tools.encodeURL(show.getTitle())
-        );
-      }
-      return url;
+      buildUrl = buildUrl.replace(
+        /\$\{getSearch\}/gu,
+        tools.encodeURL(show.getSearch())
+      );
+      buildUrl = buildUrl.replace(
+        /\$\{getTitle\}/gu,
+        tools.encodeURL(show.getTitle())
+      );
+      buildUrl = buildUrl.replace(
+        /\$\{getSeasonAndEpisode\}/gu,
+        tools.encodeURL(show.getSeasonAndEpisode())
+      );
+      return buildUrl;
     },
     close() {
       const container = popup.getContainer();
