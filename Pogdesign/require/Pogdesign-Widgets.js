@@ -142,6 +142,13 @@ const view = function view() {
       if (regexGetTitle.test(url)) {
         return url.replace(regexGetTitle, tools.encodeURL(show.getTitle()));
       }
+      const regexGetSeasonAndEpisode = /\$\{getSeasonAndEpisode\}/gu;
+      if (regexGetSeasonAndEpisode.test(url)) {
+        return url.replace(
+          regexGetSeasonAndEpisode,
+          tools.encodeURL(show.getTitle())
+        );
+      }
       return url;
     },
     close() {
