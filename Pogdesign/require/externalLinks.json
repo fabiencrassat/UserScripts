@@ -5,6 +5,10 @@
       {
         "name": "google",
         "url": "https://www.google.fr/search?q=${getSearch}+vostfr+streaming"
+      },
+      {
+        "name": "hds (VF)",
+        "url": "https://www.hds-streamingvf.com/?s=${getTitle}"
       }
     ]
   },
