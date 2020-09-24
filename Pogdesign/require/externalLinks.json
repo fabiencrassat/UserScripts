@@ -8,7 +8,7 @@
       },
       {
         "name": "hds (VF)",
-        "url": "https://www.hds-streamingvf.com/?s=${getTitle}"
+        "url": "https://wvv.hds-streaming.la/?s=${getTitle}"
       }
     ]
   },
