@@ -9,6 +9,18 @@
       {
         "name": "hds (VF)",
         "url": "https://wvv.hds-streaming.la/?s=${getTitle}"
+      },
+      {
+        "name": "papseries",
+        "url": "https://fr.papseries.net/recherche?q=${getTitle}"
+      },
+      {
+        "name": "series-stream",
+        "url": "https://series-stream.io/?s=${getTitle}"
+      },
+      {
+        "name": "123moviescc",
+        "url": "https://ww1.123moviescc.cc/?s=${getTitle}"
       }
     ]
   },
