@@ -26,18 +26,25 @@ const mainTools = function mainTools() {
     }
     return number;
   };
+  const cleanString = function cleanString(string) {
+    return string
+      .replace('.', '')
+      .replace(':', '')
+      .replace(/^The /gmui, '');
+  };
+  const encodeURL = function encodeURL(urlToEncode) {
+    return encodeURIComponent(urlToEncode).replace(/'/gu, '%27');
+  };
   const getPixelStyle = function getPixelStyle(key, value) {
     if (key && value) {
       return ` ${key}: ${value}px;`;
     }
     return '';
   };
-  const encodeURL = function encodeURL(urlToEncode) {
-    return encodeURIComponent(urlToEncode).replace(/'/gu, '%27');
-  };
 
   return {
     addZeroToOneNumber,
+    cleanString,
     encodeURL,
     getPixelStyle
   };
@@ -99,7 +106,7 @@ const model = function model() {
       show.setEpisode(episode);
     },
     setTitle(title) {
-      show.title = title.replace('.', '');
+      show.title = tools.cleanString(title);
     },
     title: ''
   };
