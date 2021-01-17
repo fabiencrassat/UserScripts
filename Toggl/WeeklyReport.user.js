@@ -62,6 +62,7 @@ const backFetch = function backFetch() {
 
 const sleep = function sleep() {
   const timeout = 1500;
+  // eslint-disable-next-line no-promise-executor-return
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
