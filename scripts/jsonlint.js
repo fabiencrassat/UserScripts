@@ -10,7 +10,7 @@ const execJsonLint = function execJsonLint(jsonFiles) {
     try {
       console.info(`Lint the file ${file}`);
       // eslint-disable-next-line max-len
-      execSync(`${path.resolve('./node_modules/.bin/jsonlint')} ${file} --in-place`);
+      execSync(`${path.resolve('./node_modules/.bin/jsonlint')} ${file}`);
     } catch (error) {
       throwError = true;
     }
