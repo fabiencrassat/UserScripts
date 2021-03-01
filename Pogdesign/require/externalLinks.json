@@ -21,6 +21,10 @@
       {
         "name": "123moviescc",
         "url": "https://ww1.123moviescc.cc/?s=${getTitle}"
+      },
+      {
+        "name": "cpasmal",
+        "url": "https://www.cpasmal.site/recherche?q=${getTitle}"
       }
     ]
   },
