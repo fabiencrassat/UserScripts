@@ -8,7 +8,7 @@
       },
       {
         "name": "hds (VF)",
-        "url": "https://wvv.hds-streaming.la/?s=${getTitle}"
+        "url": "https://wvw.hds.lc/?s=${getTitle}"
       },
       {
         "name": "papseries",
