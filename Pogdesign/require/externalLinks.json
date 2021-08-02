@@ -15,12 +15,12 @@
         "url": "https://fr.papseries.net/recherche?q=${getTitle}"
       },
       {
-        "name": "dustream",
-        "url": "https://wwv.dustream.co/recherche?q=${getTitle}"
-      },
-      {
         "name": "series-stream",
         "url": "https://series-stream.io/?s=${getTitle}"
+      },
+      {
+        "name": "dustream",
+        "url": "https://wwv.dustream.co/recherche?q=${getTitle}"
       },
       {
         "name": "123moviescc",
