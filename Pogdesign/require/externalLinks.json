@@ -19,8 +19,8 @@
         "url": "https://series-stream.io/?s=${getTitle}"
       },
       {
-        "name": "dustream",
-        "url": "https://wwv.dustream.co/recherche?q=${getTitle}"
+        "name": "ducine",
+        "url": "https://www.ducine.co/recherche?q=${getTitle}"
       },
       {
         "name": "123moviescc",
