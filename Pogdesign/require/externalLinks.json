@@ -11,10 +11,6 @@
         "url": "https://wvw.hds.lc/?s=${getTitle}"
       },
       {
-        "name": "papseries",
-        "url": "https://fr.papseries.net/recherche?q=${getTitle}"
-      },
-      {
         "name": "series-stream",
         "url": "https://series-stream.io/?s=${getTitle}"
       },
@@ -29,6 +25,10 @@
       {
         "name": "cpasmal",
         "url": "https://www.cpasmal.site/recherche?q=${getTitle}"
+      },
+      {
+        "name": "serienetflix",
+        "url": "https://www.serienetflix.co/recherche?q=${getTitle}"
       }
     ]
   },
