@@ -23,12 +23,12 @@
         "url": "https://ww1.123moviescc.cc/?s=${getTitle}"
       },
       {
-        "name": "cpasmal",
-        "url": "https://www.cpasmal.site/recherche?q=${getTitle}"
-      },
-      {
         "name": "serienetflix",
         "url": "https://www.serienetflix.co/recherche?q=${getTitle}"
+      },
+      {
+        "name": "33french-stream",
+        "url": "https://www.33french-stream.com/?s=${getTitle}"
       }
     ]
   },
