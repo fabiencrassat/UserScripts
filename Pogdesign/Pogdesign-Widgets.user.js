@@ -15,7 +15,7 @@
 // eslint-disable-next-line max-len
 // @require      https://greasyfork.org/scripts/35624-pogdesign-widgets-js/code/Pogdesign-Widgetsjs.js?version=891915
 // @grant        none
-// @run-at       document-start
+// @run-at       document-end
 // ==/UserScript==
 
 /* global $, fabiencrassat */
