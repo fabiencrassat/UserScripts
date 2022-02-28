@@ -12,23 +12,23 @@
       },
       {
         "name": "series-stream",
-        "url": "https://series-stream.io/?s=${getTitle}"
+        "url": "https://ww1.seriesstream.co/recherche?q=${getTitle}"
       },
       {
         "name": "ducine",
-        "url": "https://www.ducine.co/recherche?q=${getTitle}"
+        "url": "https://www.ducine.site/recherche?q=${getTitle}"
       },
       {
         "name": "123moviescc",
-        "url": "https://ww1.123moviescc.cc/?s=${getTitle}"
+        "url": "https://ww2.123moviescc.cc/?s=${getTitle}"
       },
       {
         "name": "serienetflix",
-        "url": "https://www.serienetflix.co/recherche?q=${getTitle}"
+        "url": "https://www.serienetflix.org/recherche?q=${getTitle}"
       },
       {
         "name": "33french-stream",
-        "url": "https://www.33french-stream.com/?s=${getTitle}"
+        "url": "https://vvv.33french-stream.com/?s=${getTitle}"
       }
     ]
   },
