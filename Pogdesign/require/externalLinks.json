@@ -29,6 +29,10 @@
       {
         "name": "33french-stream",
         "url": "https://vvv.33french-stream.com/?s=${getTitle}"
+      },
+      {
+        "name": "french-stream",
+        "url": "https://french-stream.re/?s=${getTitle}"
       }
     ]
   },
