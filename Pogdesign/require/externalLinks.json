@@ -33,6 +33,10 @@
       {
         "name": "french-stream",
         "url": "https://re.french-stream.cx/?s=${getTitle}"
+      },
+      {
+        "name": "cpasmieux",
+        "url": "https://wwv.cpasmieux.land/recherche?q=${getTitle}"
       }
     ]
   },
