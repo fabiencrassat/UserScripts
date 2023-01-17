@@ -32,7 +32,7 @@
       },
       {
         "name": "french-stream",
-        "url": "https://french-stream.cloud/?s=${getTitle}"
+        "url": "https://french-stream.gg/?s=${getTitle}"
       },
       {
         "name": "cpasmieux",
