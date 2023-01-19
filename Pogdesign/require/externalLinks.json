@@ -37,6 +37,10 @@
       {
         "name": "cpasmieux",
         "url": "https://wwv.cpasmieux.land/recherche?q=${getTitle}"
+      },
+      {
+        "name": "tinyzonetv",
+        "url": "https://tinyzonetv.to/search/${getTitle}"
       }
     ]
   },
