@@ -41,6 +41,10 @@
       {
         "name": "tinyzonetv",
         "url": "https://tinyzonetv.to/search/${getTitle}"
+      },
+      {
+        "name": "bienstream",
+        "url": "https://www.bienstream.net/recherche?q=${getTitle}"
       }
     ]
   },
