@@ -36,7 +36,11 @@
       },
       {
         "name": "cpasmieux",
-        "url": "https://wwv.cpasmieux.land/recherche?q=${getTitle}"
+        "url": "https://wwv.cpasmieux.tube/recherche?q=${getTitle}"
+      },
+      {
+        "name": "cpasmieux 2",
+        "url": "https://cpasmieux.monster/"
       },
       {
         "name": "tinyzonetv",
