@@ -11,6 +11,10 @@
         "url": "https://wvw.hds.lc/?s=${getTitle}"
       },
       {
+        "name": "hdss",
+        "url": "https://www.hdss.plus/"
+      },
+      {
         "name": "series-stream",
         "url": "https://ww1.seriesstream.co/recherche?q=${getTitle}"
       },
