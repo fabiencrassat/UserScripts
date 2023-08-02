@@ -53,6 +53,10 @@
       {
         "name": "bienstream",
         "url": "https://www.bienstream.net/recherche?q=${getTitle}"
+      },
+      {
+        "name": "juststream",
+        "url": "https://juststream.bar/?q=${getTitle}"
       }
     ]
   },
