@@ -36,7 +36,7 @@
       },
       {
         "name": "french-stream",
-        "url": "https://french-stream.es/xfsearch/${getTitle}"
+        "url": "https://web.french-stream.bio/xfsearch/${getTitle}"
       },
       {
         "name": "cpasmieux",
