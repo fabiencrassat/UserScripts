@@ -8,51 +8,27 @@
       },
       {
         "name": "hds (VF)",
-        "url": "https://wvw.hds.lc/?s=${getTitle}"
-      },
-      {
-        "name": "hdss",
-        "url": "https://www.hdss.plus/"
-      },
-      {
-        "name": "series-stream",
-        "url": "https://ww1.seriesstream.co/recherche?q=${getTitle}"
+        "url": "https://www5.hds.lc/?s=${getTitle}"
       },
       {
         "name": "ducine",
-        "url": "https://www.ducine.site/recherche?q=${getTitle}"
-      },
-      {
-        "name": "123moviescc",
-        "url": "https://ww2.123moviescc.cc/?s=${getTitle}"
-      },
-      {
-        "name": "serienetflix",
-        "url": "https://www.serienetflix.org/recherche?q=${getTitle}"
-      },
-      {
-        "name": "33french-stream",
-        "url": "https://vvv.33french-stream.com/?s=${getTitle}"
+        "url": "https://direct.ducine.net/recherche?q=${getTitle}"
       },
       {
         "name": "french-stream",
-        "url": "https://web.french-stream.bio/xfsearch/${getTitle}"
+        "url": "https://vvw.french-stream.bio//xfsearch/${getTitle}"
       },
       {
         "name": "cpasmieux",
-        "url": "https://cpasmieux.hair/recherche?q=${getTitle}"
-      },
-      {
-        "name": "tinyzonetv",
-        "url": "https://tinyzonetv.to/search/${getTitle}"
+        "url": "https://www.cpasmieux.is//recherche?q=${getTitle}"
       },
       {
         "name": "bienstream",
-        "url": "https://www.bienstream.net/recherche?q=${getTitle}"
+        "url": "https://bienstream.cc/recherche?q=${getTitle}"
       },
       {
         "name": "juststream",
-        "url": "https://juststream.bar/?q=${getTitle}"
+        "url": "https://juststream.now/?q=${getTitle}"
       }
     ]
   },
@@ -73,7 +49,7 @@
       },
       {
         "name": "todaytvseries2",
-        "url": "http://www.todaytvseries2.com/search-series?searchword=${getTitle}"
+        "url": "https://www.todaytvseries6.com/search-series?searchword=${getTitle}"
       },
       {
         "name": "reddit",
