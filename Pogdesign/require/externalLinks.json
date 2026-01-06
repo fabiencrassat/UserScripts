@@ -16,11 +16,11 @@
       },
       {
         "name": "french-stream",
-        "url": "https://vvw.french-stream.bio//xfsearch/${getTitle}"
+        "url": "https://vvw.french-stream.one/xfsearch/${getTitle}"
       },
       {
         "name": "cpasmieux",
-        "url": "https://www.cpasmieux.is//recherche?q=${getTitle}"
+        "url": "https://www.cpasmieux.is/recherche?q=${getTitle}"
       },
       {
         "name": "bienstream",
