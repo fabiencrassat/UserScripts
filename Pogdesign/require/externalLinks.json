@@ -16,7 +16,7 @@
       },
       {
         "name": "french-stream",
-        "url": "https://vvw.french-stream.one/xfsearch/${getTitle}"
+        "url": "https://french-stream.one/xfsearch/${getTitle}"
       },
       {
         "name": "cpasmieux",
